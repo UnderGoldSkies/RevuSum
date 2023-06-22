@@ -17,6 +17,11 @@ stop_words = set(stopwords.words('english')) # you can also choose other languag
 #training functions
 def combine_and_label(df):
 
+    """
+    Combining both positive and negative reviews
+    positive label with 1, negative label with 0
+    """
+
     #Split negative and positive columns into two Dataframe
     negative_df = pd.DataFrame(df.Negative_Review)
     positive_df = pd.DataFrame(df.Positive_Review)
@@ -34,11 +39,19 @@ def combine_and_label(df):
     positive_df['Label'] = [1] * num_positive_rows
 
     #Combine both dataframe together to form dataset
-    combined_df = pd.concat([negative_df, positive_df], axis=0)
+    combined_df = pd.concat([negative_df, positive_df], axis=0,ignore_index=True)
 
     return combined_df
 
 def preprocessing(sentence):
+
+    """
+    Removing whitespace
+    Lowercase all words
+    Remove digits
+    Tokenized Words
+    """
+
     sentence = sentence.strip("") #whitespace
     sentence = sentence.lower() #lowercase
     sentence = ''.join(char for char in sentence if not char.isdigit()) #remove number
@@ -47,16 +60,45 @@ def preprocessing(sentence):
     word_tokens = word_tokenize(sentence)
     return word_tokens
 
-def filter_data(df):
-    for sentence in df.Review:
-        sentence = preprocessing(sentence)
+def basic_preprocessing_data(df):
 
-        if len(sentence) <3:
-            sentence = 'nothing'
-            return sentence
+    """
+    Applying preprocessing on every review
+    """
 
-        else:
-            return sentence
+    df['Review'] = df['Review'].apply(preprocessing)
 
-    filtered_df = df[~df['Review'] == 'nothing']
+    return df
+
+
+def filter_reviews(df):
+    # Apply the filter condition and create a boolean mask
+    mask = df['Review'].apply(lambda x: len(x) > 3)
+
+    # Filter the DataFrame based on the mask
+    filtered_df = df[mask]
+
+    # Return the filtered DataFrame
     return filtered_df
+
+def lemm_reviews(sentence):
+    verb_lemmatized = [
+        WordNetLemmatizer().lemmatize(word, pos = "v") # v --> verbs
+        for word in sentence]
+
+    # 2 - Lemmatizing the nouns
+    noun_lemmatized = [
+        WordNetLemmatizer().lemmatize(word, pos = "n") # n --> nouns
+        for word in verb_lemmatized]
+
+    return noun_lemmatized
+
+def lemm_data(df):
+
+    """
+    Applying preprocessing on every review
+    """
+
+    df['Review'] = df['Review'].apply(lemm_reviews)
+
+    return df

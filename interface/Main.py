@@ -41,7 +41,7 @@ def generating_test_train_df(df):
     training_df = hotel_morethan_100_reviews_df.drop(indices_to_remove)
 
     # Combining testing.df with remainder.df (the hotels (less than 100 rows))
-    testing_df = pd.concat([testing_df, remainder_df], axis=0)
+    testing_df = pd.concat([testing_df, remainder_df], axis=0,ignore_index=True)
 
     return training_df, testing_df
 
