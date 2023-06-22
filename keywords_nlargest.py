@@ -1,8 +1,11 @@
 #Originally from Jake Version 1.0
-
-# originly from Jack
+#using heapq — Heap queue algorithm
+#https://docs.python.org/3/library/heapq.html
+#nlargest(n, iterable, key=None) is an inbuilt function of heapq module in Python /
+# that returns the n largest elements from a dataset.
 
 import nltk
+import pandas as pd
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -13,6 +16,16 @@ stop_words = set(stopwords.words("english"))
 word_list = list(stop_words)
 word_list.append('negative')
 stop_words = set(word_list)
+
+#import data from a csv file and store in a dataframe
+import pandas as pd
+df = pd.read_csv('../raw_data/Hotel_Reviews.csv')
+
+# merger two 'Negative_Review', 'Positive_Review' columns and save to a new column 'Reviews'
+df['Reviews'] = df['Negative_Review'] + df['Positive_Review']
+X_train = df['Reviews']
+
+
 # Function to preprocess sentences
 def preprocess(sentences):
     lemmatizer = WordNetLemmatizer()
@@ -24,6 +37,7 @@ def preprocess(sentences):
             if word not in stop_words:
                 word_frequencies[word] += 1
     return word_frequencies
+
 # Function to extract keywords using TextRank
 def extract_keywords(sentences, num_keywords=100):
     word_frequencies = preprocess(sentences)
@@ -34,9 +48,6 @@ def extract_keywords(sentences, num_keywords=100):
     # Get top N keywords with highest scores
     top_keywords = nlargest(num_keywords, word_frequencies, key=word_frequencies.get)
     return top_keywords
+
 # Extract keywords from the list of sentences
 keywords = extract_keywords(X_train)
-# Print the extracted keywords
-print("Extracted Keywords:")
-for keyword in keywords:
-    print(keyword)
