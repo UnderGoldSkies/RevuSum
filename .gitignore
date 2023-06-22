@@ -1,2 +1,5 @@
-# ignore raw data file(227M)
-data/Hotel_Reviews.csv
+# ignore  data folder (227M)
+data/*
+
+# ignore mac cache folder
+.DS_Store
