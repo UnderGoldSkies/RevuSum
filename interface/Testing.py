@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import string
+import ast
 from nltk.corpus import stopwords
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
@@ -8,10 +9,35 @@ from nltk.corpus import stopwords
 
 
 
+
 #Initializing stop_words
 stop_words = set(stopwords.words('english')) # you can also choose other languages
 
 #predicting functions
+def test_preprocessing(df):
+    negative_df = pd.DataFrame(df.Negative_Review)
+    positive_df = pd.DataFrame(df.Positive_Review)
+
+    #Standardize Column names to review
+    negative_df = negative_df.rename(columns={'Negative_Review': 'Review'})
+    positive_df = positive_df.rename(columns={'Positive_Review': 'Review'})
+
+    # Get the number of rows in the DataFrame
+    num_negative_rows = negative_df.shape[0]
+    num_positive_rows = positive_df.shape[0]
+
+    # Create a new column with all 0 and 1 values based on positive/ negative
+    negative_df['Label'] = [0] * num_negative_rows
+    positive_df['Label'] = [1] * num_positive_rows
+
+    #Combine both dataframe together to form dataset
+    combined_df = pd.concat([negative_df, positive_df], axis=0,ignore_index=True)
+
+    process_df = basic_preprocessing_data(combined_df)
+
+    result_df = lemm_data(process_df)
+
+    return result_df
 
 
 #training functions
@@ -100,5 +126,6 @@ def lemm_data(df):
     """
 
     df['Review'] = df['Review'].apply(lemm_reviews)
+    df['Review'] = df['Review'].apply(lambda x: ' '.join(x))
 
     return df
