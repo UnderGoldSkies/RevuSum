@@ -28,6 +28,8 @@ X_train = df['Reviews']
 
 # Function to preprocess sentences
 def preprocess(sentences):
+    #create doc string for this funciton
+
     lemmatizer = WordNetLemmatizer()
     word_frequencies = defaultdict(int)
     for sentence in sentences:
