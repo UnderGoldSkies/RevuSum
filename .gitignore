@@ -4,4 +4,5 @@ data/*
 # ignore mac cache folder
 .DS_Store
 
-#test
+#web scaping
+web_scraping/*
