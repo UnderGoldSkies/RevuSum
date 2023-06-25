@@ -2,10 +2,17 @@ import numpy as np
 import pandas as pd
 import string
 import ast
+import os
 from nltk.corpus import stopwords
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
+from sklearn.utils import shuffle
+import pickle
+
+from timeit import default_timer as timer
+
+
 
 
 
@@ -33,11 +40,16 @@ def test_preprocessing(df):
     #Combine both dataframe together to form dataset
     combined_df = pd.concat([negative_df, positive_df], axis=0,ignore_index=True)
 
+    #Apply preprocessing on all sentences in all review
     process_df = basic_preprocessing_data(combined_df)
 
+    #lemmatized all nouns and verbs in sentence in all review
     result_df = lemm_data(process_df)
 
-    return result_df
+    #Shuffle dataframe
+    shuffle_df = np.random.shuffle(result_df)
+
+    return shuffle_df
 
 
 #training functions
@@ -67,7 +79,10 @@ def combine_and_label(df):
     #Combine both dataframe together to form dataset
     combined_df = pd.concat([negative_df, positive_df], axis=0,ignore_index=True)
 
-    return combined_df
+    #Shuffle dataframe
+    shuffle_df = shuffle(combined_df)
+
+    return shuffle_df
 
 def preprocessing(sentence):
 
@@ -89,7 +104,7 @@ def preprocessing(sentence):
 def basic_preprocessing_data(df):
 
     """
-    Applying preprocessing on every review
+    Applying preprocessing on every sentence in reviews
     """
 
     df['Review'] = df['Review'].apply(preprocessing)
@@ -98,6 +113,13 @@ def basic_preprocessing_data(df):
 
 
 def filter_reviews(df):
+
+    """
+    Filtering away reviews with less than 3 words:
+    Rationale: Lots of review "No Positive", "No Negative", "None", such
+    reviews are not meaningful for keyword sentiment analysis of positive or negative.
+    """
+
     # Apply the filter condition and create a boolean mask
     mask = df['Review'].apply(lambda x: len(x) > 3)
 
@@ -108,6 +130,11 @@ def filter_reviews(df):
     return filtered_df
 
 def lemm_reviews(sentence):
+
+    """
+    Lemmatized verb and nouns for words in sentence.
+    """
+
     verb_lemmatized = [
         WordNetLemmatizer().lemmatize(word, pos = "v") # v --> verbs
         for word in sentence]
@@ -122,10 +149,110 @@ def lemm_reviews(sentence):
 def lemm_data(df):
 
     """
-    Applying preprocessing on every review
+    Applying Lemmatized verb and nouns for sentence in all reviews.
     """
 
     df['Review'] = df['Review'].apply(lemm_reviews)
     df['Review'] = df['Review'].apply(lambda x: ' '.join(x))
 
     return df
+
+
+
+def prediction_all_in_one(test_file_path):
+
+    """
+    Combine all prediction processing into one
+    Input example: '~/code/TechLah/RevuSum/data/testing_df.csv'
+    Output example: pred_y and test_y
+    """
+    start = timer()
+
+    #retrieving csv from filepath
+    test_hotelreviews = pd.read_csv(test_file_path)
+
+    end = timer()
+    print(f"reading csv = {round(end-start,3)}secs" )
+
+    start = timer()
+    #preprocess the test dataframe
+    preprocess_df = lemm_data(filter_reviews(basic_preprocessing_data(combine_and_label(test_hotelreviews))))
+
+    end = timer()
+    print(f"preprocess dataframe = {round(end-start,3)}secs" )
+
+
+    start = timer()
+    #retrieving model from filepath
+    model_file_path = '~/code/TechLah/RevuSum/ML model/hash_nb_model(92%).pkl'
+    # Expand the tilde (~) character and get the absolute path
+    model_file_path = os.path.expanduser(model_file_path)
+
+    # Load the model from the file
+    with open(model_file_path, 'rb') as file:
+        hash_nb_model = pickle.load(file)
+
+    end = timer()
+    print(f"importing model = {round(end-start,3)}secs" )
+
+    test_X = preprocess_df['Review']
+    test_y = preprocess_df['Label']
+
+    start = timer()
+    pred_y = hash_nb_model.predict(test_X)
+
+    end = timer()
+    print(f"predicting outcome = {round(end-start,3)}secs" )
+
+    return pred_y, test_y
+
+
+def preprocess_of_test_data(test_file_path):
+
+    """
+    Split up preprocess
+    """
+    start = timer()
+
+    #retrieving csv from filepath
+    test_hotelreviews = pd.read_csv(test_file_path)
+
+    end = timer()
+    print(f"reading csv = {round(end-start,3)}secs" )
+
+    start = timer()
+    #preprocess the test dataframe
+    preprocess_df = lemm_data(filter_reviews(basic_preprocessing_data(combine_and_label(test_hotelreviews))))
+
+    end = timer()
+    print(f"preprocess dataframe = {round(end-start,3)}secs" )
+
+
+    return preprocess_df
+
+
+def prediction_of_test_data(preprocess_df):
+
+    start = timer()
+    #retrieving model from filepath
+    model_file_path = '~/code/TechLah/RevuSum/ML model/hash_nb_model(92%).pkl'
+    # Expand the tilde (~) character and get the absolute path
+    model_file_path = os.path.expanduser(model_file_path)
+
+    # Load the model from the file
+    with open(model_file_path, 'rb') as file:
+        hash_nb_model = pickle.load(file)
+
+    end = timer()
+    print(f"importing model = {round(end-start,3)}secs" )
+
+    test_X = preprocess_df['Review']
+    test_y = preprocess_df['Label']
+
+    start = timer()
+    pred_y = hash_nb_model.predict(test_X)
+
+    end = timer()
+    print(f"predicting outcome = {round(end-start,3)}secs" )
+
+    return pred_y, test_y
