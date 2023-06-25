@@ -1,0 +1,37 @@
+# Feel free to use this file to list the strict minimum requirements to copy inside your docker container in production
+# You may want to remove dev requirements such as pytest, ipykernel, matplotlib etc...
+
+wheel
+nbresult
+colorama
+ipdb
+yapf
+pygeohash
+seaborn
+numpy==1.23.5
+pandas==1.5.3
+scipy==1.10.0
+scikit-learn==1.2.1
+google-cloud-bigquery
+google-cloud-storage
+db-dtypes
+pyarrow
+
+# required for tensorflow
+protobuf==3.20.1
+
+# prevent bq 3+ db-dtypes package error when running training from bq
+
+mlflow==2.1.1
+
+python-dotenv
+prefect==2.8.1
+psycopg2-binary
+
+# API
+fastapi
+pytz
+uvicorn
+# tests
+httpx
+pytest-asyncio
