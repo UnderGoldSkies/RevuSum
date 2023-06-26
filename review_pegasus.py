@@ -6,10 +6,9 @@ from transformers import PegasusForConditionalGeneration, PegasusTokenizer, Adam
 from dbpunctuator.inference import Inference, InferenceArguments
 from dbpunctuator.utils import DEFAULT_ENGLISH_TAG_PUNCTUATOR_MAP
 
-# pip install transformers
-# pip install sentencepiece
-# pip install --upgrade torch transformers pegasus
-# pip install sentence-splitter
+# !pip install transformers
+# !pip install sentencepiece
+# !pip install --upgrade torch transformers pegasus
 # !apt-get install -y locales
 # !locale-gen en_US.UTF-8
 # !update-locale LANG=en_US.UTF-8
@@ -26,8 +25,10 @@ class Review_Pegasus:
         self.pegasus_tokenizer = None
         self.pegasus_model = None
         self.tokens = None
-        self.all_reviews = ''
-        self.decoded_summary =''
+        self.pos_reviews = ''
+        self.neg_reviews = ''
+        self.pos_encoded_summary =''
+        self.neg_encoded_summary =''
         # self.device = None
 
     def load_data(self):
@@ -56,25 +57,29 @@ class Review_Pegasus:
             counter += 1
         return review_str
 
-    def pos_neg_reviews(self):
-        hotel_df = self.raw_df.query('Hotel_Name == "Apex Temple Court Hotel"')
-        positive_reviews = hotel_df['Positive_Review'].apply(self.clean).dropna()
-        negative_reviews = hotel_df['Negative_Review'].apply(self.clean).dropna()
-        positive_reviews_str = self.turn_rev_series_to_str(positive_reviews)
-        negative_reviews_str = self.turn_rev_series_to_str(negative_reviews)
-        self.all_reviews = positive_reviews_str + '\n' + negative_reviews_str
+    def get_reviews(self):
+        positive_reviews = self.hotel_df['Positive_Review'].apply(self.clean).dropna()
+        negative_reviews = self.hotel_df['Negative_Review'].apply(self.clean).dropna()
+        self.pos_reviews = self.turn_rev_series_to_str(positive_reviews)
+        self.neg_reviews = self.turn_rev_series_to_str(negative_reviews)
 
     def load_model(self):
         self.pegasus_tokenizer = PegasusTokenizer.from_pretrained(self.model_name)
         self.pegasus_model = PegasusForConditionalGeneration.from_pretrained(
             self.model_name)
 
-    def process_text(self):
-        tokens = self.pegasus_tokenizer(self.all_reviews, truncation=True, padding='longest', return_tensors='pt')
+    def process_review(self):
+        ## positive reviews summary
+        tokens = self.pegasus_tokenizer(self.pos_reviews, truncation=True, padding='longest', return_tensors='pt')
         encoded_summary = self.pegasus_model.generate(**tokens, min_length=32, max_length=128, num_return_sequences=1,
                                                 decoder_start_token_id=self.pegasus_tokenizer.pad_token_id)
-        self.decoded_summary = self.pegasus_tokenizer.decode(encoded_summary.squeeze(), skip_special_tokens=True)
+        self.pos_encoded_summary = self.pegasus_tokenizer.decode(encoded_summary.squeeze(), skip_special_tokens=True)
 
+        ## negative reviews summary
+        tokens = self.pegasus_tokenizer(self.neg_reviews, truncation=True, padding='longest', return_tensors='pt')
+        encoded_summary = self.pegasus_model.generate(**tokens, min_length=32, max_length=128, num_return_sequences=1,
+                                                decoder_start_token_id=self.pegasus_tokenizer.pad_token_id)
+        self.neg_encoded_summary = self.pegasus_tokenizer.decode(encoded_summary.squeeze(), skip_special_tokens=True)
 
     def generate_punctuation(self):
         args = InferenceArguments(
@@ -84,4 +89,7 @@ class Review_Pegasus:
 
         punctuator_model = Inference(inference_args=args,
                                     verbose=False)
-        punctuator_model.punctuation(self.decoded_summary)[0][0]
+
+        positive_reviews = punctuator_model.punctuation(self.pos_encoded_summary)[0][0]
+        negative_reviews = punctuator_model.punctuation(self.neg_encoded_summary)[0][0]
+        return positive_reviews, negative_reviews
