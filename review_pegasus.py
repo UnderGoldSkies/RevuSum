@@ -90,6 +90,10 @@ class Review_Pegasus:
         punctuator_model = Inference(inference_args=args,
                                     verbose=False)
 
-        positive_reviews = punctuator_model.punctuation(self.pos_encoded_summary)[0][0]
-        negative_reviews = punctuator_model.punctuation(self.neg_encoded_summary)[0][0]
-        return positive_reviews, negative_reviews
+        self.positive_reviews = punctuator_model.punctuation(self.pos_encoded_summary)[0][0]
+        self.negative_reviews = punctuator_model.punctuation(self.neg_encoded_summary)[0][0]
+
+    def clean_summary(self):
+        last_pos_index = self.positive_reviews.rindex('.')+1
+        last_neg_index = self.negative_reviews.rindex('.')+1
+        return self.positive_reviews[:last_pos_index], self.negative_reviews[:last_neg_index]
