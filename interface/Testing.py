@@ -9,7 +9,6 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from sklearn.utils import shuffle
 import pickle
-
 from timeit import default_timer as timer
 
 
@@ -207,23 +206,27 @@ def prediction_all_in_one(test_file_path):
     return pred_y, test_y
 
 
-def preprocess_of_test_data(test_file_path):
+def preprocess_of_test_data(dataframe):
 
     """
     Split up preprocess
     """
     start = timer()
 
-    #retrieving csv from filepath
-    test_hotelreviews = pd.read_csv(test_file_path)
+    # #retrieving csv from filepath
+    # test_hotelreviews = pd.read_csv(test_file_path)
 
-    end = timer()
-    print(f"reading csv = {round(end-start,3)}secs" )
+    # end = timer()
+    # print(f"reading csv = {round(end-start,3)}secs")
+    # Replace NaN values with "nothing" in specific columns
+    columns_to_replace = ['Positive_Review', 'Negative_Review']
+
+    dataframe[columns_to_replace] = dataframe[columns_to_replace].fillna('nothing')
 
     start = timer()
-    #preprocess the test dataframe
-    preprocess_df = lemm_data(filter_reviews(basic_preprocessing_data(combine_and_label(test_hotelreviews))))
 
+    #preprocess the test dataframe
+    preprocess_df = lemm_data(filter_reviews(basic_preprocessing_data(combine_and_label(dataframe))))
     end = timer()
     print(f"preprocess dataframe = {round(end-start,3)}secs" )
 
