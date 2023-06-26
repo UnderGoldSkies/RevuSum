@@ -16,84 +16,98 @@ from dbpunctuator.utils import DEFAULT_ENGLISH_TAG_PUNCTUATOR_MAP
 
 #Please note that this is a generated summary and may not capture all the nuances of the original text.
 
-class Review_Pegasus:
+    # def __init__(self):
+    #     self.model_name = 'google/pegasus-large'
+    #     self.raw_df = None
+    #     self.review_df = None
+    #     self.pegasus_tokenizer = None
+    #     self.pegasus_model = None
+    #     self.tokens = None
+    #     self.pos_reviews = ''
+    #     self.neg_reviews = ''
+    #     self.pos_encoded_summary =''
+    #     self.neg_encoded_summary =''
+    #     # self.device = None
 
-    def __init__(self):
-        self.model_name = 'google/pegasus-large'
-        self.raw_df = None
-        self.review_df = None
-        self.pegasus_tokenizer = None
-        self.pegasus_model = None
-        self.tokens = None
-        self.pos_reviews = ''
-        self.neg_reviews = ''
-        self.pos_encoded_summary =''
-        self.neg_encoded_summary =''
-        # self.device = None
 
-    def load_data(self):
-        #pull the data
-        url = os.getcwd() + '/raw_data/hotel_reviews.csv'
-        self.raw_df = pd.read_csv(url)
+def main(hotel_name):
+    raw_df = load_data()
+    pos_reviews, neg_reviews = get_reviews(raw_df, hotel_name)
+    pegasus_tokenizer, pegasus_model = load_model()
+    pos_encoded_summary, neg_encoded_summary = process_review(pegasus_tokenizer, pegasus_model, pos_reviews, neg_reviews)
+    positive_reviews, negative_reviews = generate_punctuation(pos_encoded_summary, neg_encoded_summary)
+    return clean_summary(positive_reviews, negative_reviews)
 
-    # def define_device(self):
-    #     self.device = "cuda" if torch.cuda.is_available() else "cpu"
+def load_data():
+    #pull the data
+    url = os.getcwd() + '/raw_data/cleaned_test_data_5.pkl'
+    raw_df = pd.read_pickle(url)
+    return raw_df
 
-    def clean(text):
-        if len(text.split()) >= 5:
-            text = text.strip()
-            text = text.strip('.') +'.'
-            return text
+# def define_device(self):
+#     self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    def turn_rev_series_to_str(review_series):
-        review_str = ''
-        rev_length = len(review_series)
-        counter = 1
-        for item in review_series.values:
-            if counter == rev_length:
-                review_str += item
-            else:
-                review_str += item + '\n'
-            counter += 1
-        return review_str
+def clean(text):
+    if len(text.split()) >= 5:
+        text = text.strip()
+        text = text.strip('.') +'.'
+        return text
 
-    def get_reviews(self):
-        positive_reviews = self.hotel_df['Positive_Review'].apply(self.clean).dropna()
-        negative_reviews = self.hotel_df['Negative_Review'].apply(self.clean).dropna()
-        self.pos_reviews = self.turn_rev_series_to_str(positive_reviews)
-        self.neg_reviews = self.turn_rev_series_to_str(negative_reviews)
+def turn_rev_series_to_str(review_series):
+    review_str = ''
+    rev_length = len(review_series)
+    counter = 1
+    for item in review_series.values:
+        if counter == rev_length:
+            review_str += item
+        else:
+            review_str += item + '\n'
+        counter += 1
+    return review_str
 
-    def load_model(self):
-        self.pegasus_tokenizer = PegasusTokenizer.from_pretrained(self.model_name)
-        self.pegasus_model = PegasusForConditionalGeneration.from_pretrained(
-            self.model_name)
+def get_reviews(raw_df, hotel_name):
+    hotel_df = raw_df.query(f'Hotel_Name == {hotel_name}')
+    positive_reviews = hotel_df['Positive_Review'].apply(clean).dropna()
+    negative_reviews = hotel_df['Negative_Review'].apply(clean).dropna()
+    pos_reviews = turn_rev_series_to_str(positive_reviews)
+    neg_reviews = turn_rev_series_to_str(negative_reviews)
+    return pos_reviews, neg_reviews
 
-    def process_review(self):
-        ## positive reviews summary
-        tokens = self.pegasus_tokenizer(self.pos_reviews, truncation=True, padding='longest', return_tensors='pt')
-        encoded_summary = self.pegasus_model.generate(**tokens, min_length=32, max_length=128, num_return_sequences=1,
-                                                decoder_start_token_id=self.pegasus_tokenizer.pad_token_id)
-        self.pos_encoded_summary = self.pegasus_tokenizer.decode(encoded_summary.squeeze(), skip_special_tokens=True)
+def load_model():
+    model_name = 'google/pegasus-large'
+    pegasus_tokenizer = PegasusTokenizer.from_pretrained(model_name)
+    pegasus_model = PegasusForConditionalGeneration.from_pretrained(
+        model_name)
+    return pegasus_tokenizer, pegasus_model
 
-        ## negative reviews summary
-        tokens = self.pegasus_tokenizer(self.neg_reviews, truncation=True, padding='longest', return_tensors='pt')
-        encoded_summary = self.pegasus_model.generate(**tokens, min_length=32, max_length=128, num_return_sequences=1,
-                                                decoder_start_token_id=self.pegasus_tokenizer.pad_token_id)
-        self.neg_encoded_summary = self.pegasus_tokenizer.decode(encoded_summary.squeeze(), skip_special_tokens=True)
+def process_review(pegasus_tokenizer, pegasus_model, pos_reviews, neg_reviews):
+    ## positive reviews summary
+    tokens = pegasus_tokenizer(pos_reviews, truncation=True, padding='longest', return_tensors='pt')
+    encoded_summary = pegasus_model.generate(**tokens, min_length=32, max_length=128, num_return_sequences=1,
+                                            decoder_start_token_id=pegasus_tokenizer.pad_token_id)
+    pos_encoded_summary = pegasus_tokenizer.decode(encoded_summary.squeeze(), skip_special_tokens=True)
 
-    def generate_punctuation(self):
-        args = InferenceArguments(
-        model_name_or_path="Qishuai/distilbert_punctuator_en",
-        tokenizer_name="Qishuai/distilbert_punctuator_en",
-        tag2punctuator=DEFAULT_ENGLISH_TAG_PUNCTUATOR_MAP)
+    ## negative reviews summary
+    tokens = pegasus_tokenizer(neg_reviews, truncation=True, padding='longest', return_tensors='pt')
+    encoded_summary = pegasus_model.generate(**tokens, min_length=32, max_length=128, num_return_sequences=1,
+                                            decoder_start_token_id=pegasus_tokenizer.pad_token_id)
+    neg_encoded_summary = pegasus_tokenizer.decode(encoded_summary.squeeze(), skip_special_tokens=True)
+    return pos_encoded_summary, neg_encoded_summary
 
-        punctuator_model = Inference(inference_args=args,
-                                    verbose=False)
+def generate_punctuation(pos_encoded_summary, neg_encoded_summary):
+    args = InferenceArguments(
+    model_name_or_path="Qishuai/distilbert_punctuator_en",
+    tokenizer_name="Qishuai/distilbert_punctuator_en",
+    tag2punctuator=DEFAULT_ENGLISH_TAG_PUNCTUATOR_MAP)
 
-        self.positive_reviews = punctuator_model.punctuation(self.pos_encoded_summary)[0][0]
-        self.negative_reviews = punctuator_model.punctuation(self.neg_encoded_summary)[0][0]
+    punctuator_model = Inference(inference_args=args,
+                                verbose=False)
 
-    def clean_summary(self):
-        last_pos_index = self.positive_reviews.rindex('.')+1
-        last_neg_index = self.negative_reviews.rindex('.')+1
-        return self.positive_reviews[:last_pos_index], self.negative_reviews[:last_neg_index]
+    positive_reviews = punctuator_model.punctuation(pos_encoded_summary)[0][0]
+    negative_reviews = punctuator_model.punctuation(neg_encoded_summary)[0][0]
+    return positive_reviews, negative_reviews
+
+def clean_summary(positive_reviews, negative_reviews):
+    last_pos_index = positive_reviews.rindex('.')+1
+    last_neg_index = negative_reviews.rindex('.')+1
+    return positive_reviews[:last_pos_index], negative_reviews[:last_neg_index]
