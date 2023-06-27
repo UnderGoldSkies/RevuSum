@@ -84,7 +84,7 @@ st.header("Review Summary: ")
 with st.container():
     image_col, text_col = st.columns((0.2,2))
     with image_col:
-        img = Image.open('thumbsup.jpeg')
+        img = Image.open('website/thumbsup.jpeg')
         st.image(img)
 
 
@@ -104,7 +104,7 @@ with st.container():
 with st.container():
     image_col, text_col = st.columns((0.2,2))
     with image_col:
-        img = Image.open('thumbsdown.jpeg')
+        img = Image.open('website/thumbsdown.jpeg')
         st.image(img)
 
     with text_col:
