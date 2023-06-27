@@ -6,11 +6,13 @@ from PIL import Image
 st.title("RevuSUM")
 st.markdown("""
 RevuSum is a cutting-edge web app that simplifies hotel selection. Powered by AI, it generates concise summaries and insightful information from real visitor reviews. Say goodbye to manual review sifting - with RevuSum, access relevant summaries highlighting room quality, location, breakfast, cleanliness, and more. Make informed holiday choices with RevuSum's comprehensive insights.
-
-Experience a seamless way to choose the perfect hotel. Save time and effort with AI-generated summaries covering suite options, spa facilities, quietness, pools, and beds. Embrace AI technology for stress-free hotel selection. Let RevuSum optimize your vacation with accurate, reliable summaries and insights.
 """)
 
-img = Image.open('website/village1.jpeg')
+#image location parameter
+image_location = 'img/' #local environment
+#image_location = 'website/img/' #streamli cloud environment
+
+img = Image.open(f'{image_location}village1.jpeg')
 st.image(img)
 
 #submit button
@@ -84,7 +86,7 @@ st.header("Review Summary: ")
 with st.container():
     image_col, text_col = st.columns((0.2,2))
     with image_col:
-        img = Image.open('website/thumbsup.jpeg')
+        img = Image.open(f'{image_location}thumbsup.jpeg')
         st.image(img)
 
 
@@ -104,7 +106,7 @@ with st.container():
 with st.container():
     image_col, text_col = st.columns((0.2,2))
     with image_col:
-        img = Image.open('website/thumbsdown.jpeg')
+        img = Image.open(f'{image_location}thumbsdown.jpeg')
         st.image(img)
 
     with text_col:
