@@ -1,6 +1,7 @@
 import streamlit as st
 from annotated_text import annotated_text, annotation
 import time
+from PIL import Image
 
 st.title("RevuSUM")
 st.markdown("""
@@ -9,9 +10,8 @@ RevuSum is a cutting-edge web app that simplifies hotel selection. Powered by AI
 Experience a seamless way to choose the perfect hotel. Save time and effort with AI-generated summaries covering suite options, spa facilities, quietness, pools, and beds. Embrace AI technology for stress-free hotel selection. Let RevuSum optimize your vacation with accurate, reliable summaries and insights.
 """)
 
-image = 'village1.jpeg'
-
-st.image(image)
+img = Image.open('village1.jpeg')
+st.image(img)
 
 #submit button
 # Store the initial value of widgets in session state
@@ -84,7 +84,9 @@ st.header("Review Summary: ")
 with st.container():
     image_col, text_col = st.columns((0.2,2))
     with image_col:
-        st.image("thumbsup.jpeg")
+        img = Image.open('thumbsup.jpeg')
+        st.image(img)
+
 
     with text_col:
         st.subheader("What people like about the hotel:")
@@ -102,7 +104,8 @@ with st.container():
 with st.container():
     image_col, text_col = st.columns((0.2,2))
     with image_col:
-        st.image("thumbsdown.jpeg")
+        img = Image.open('thumbsdown.jpeg')
+        st.image(img)
 
     with text_col:
         st.subheader("What people don't like about the hotel:")
