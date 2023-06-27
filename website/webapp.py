@@ -10,7 +10,7 @@ RevuSum is a cutting-edge web app that simplifies hotel selection. Powered by AI
 Experience a seamless way to choose the perfect hotel. Save time and effort with AI-generated summaries covering suite options, spa facilities, quietness, pools, and beds. Embrace AI technology for stress-free hotel selection. Let RevuSum optimize your vacation with accurate, reliable summaries and insights.
 """)
 
-img = Image.open('village1.jpeg')
+img = Image.open('website/village1.jpeg')
 st.image(img)
 
 #submit button
