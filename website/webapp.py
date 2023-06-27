@@ -10,9 +10,9 @@ RevuSum is a cutting-edge web app that simplifies hotel selection. Powered by AI
 
 #image location parameter
 image_location = 'img/' #local environment
-#image_location = 'website/img/' #streamli cloud environment
+#image_location = 'website/img/' #streamlit cloud environment
 
-img = Image.open(f'{image_location}village1.jpeg')
+img = Image.open(f"""{image_location}village1.jpeg""")
 st.image(img)
 
 #submit button
