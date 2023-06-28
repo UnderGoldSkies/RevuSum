@@ -5,7 +5,46 @@ from PIL import Image
 from dataclasses import dataclass
 from time import sleep
 import requests
+import os
+import pandas as pd
 
+keywords_list=[]
+positive_sum =''
+negative_sum =''
+default_hotel_name = "  ---Your Hotel Choice---  "
+#color of keywords
+Pos_color = "#afa"
+Neg_color = "#faa"
+
+def process_result(hotel_selected):
+    url = 'https://teamworkmakeswetdream-tddniu6ceq-ew.a.run.app/predict'
+    params = dict(hotel_name=hotel_selected)
+    response = requests.get(url, params=params)
+    return_dict = response.json()
+    for key, value in return_dict.items():
+        if key == 'Positive_Review':
+            positive_sum = value
+        elif key == 'Negative_Review':
+            negative_sum = value
+        else:
+            value_str = f'{value * 100} %'
+            key = key.capitalize()
+            if value > 0.5:
+                keywords_list.append((key, value_str, Pos_color))
+            else:
+                keywords_list.append((key, value_str, Neg_color))
+    return positive_sum, negative_sum
+
+def load_hotel_name():
+    url = os.getcwd() + '/cleaned_test_data_5.pkl'
+    raw_df = pd.read_pickle(url)
+    hotel_list = [default_hotel_name]
+    for hotel_name in raw_df['Hotel_Name'].unique():
+        hotel_list.append(hotel_name)
+    return hotel_list
+
+#get the hotel name list
+hotel_list = load_hotel_name()
 
 st.title("RevuSUM")
 st.markdown("""
@@ -13,12 +52,9 @@ RevuSum is a cutting-edge web app that simplifies hotel selection. Powered by AI
 """)
 
 
-
 # img = Image.open('website/img/village1.jpeg')    #streamlit cloud environment
 img = Image.open('img/village1.jpeg')  #local environment
 st.image(img)
-
-
 
 #submit button
 # Store the initial value of widgets in session state
@@ -29,56 +65,17 @@ if "visibility" not in st.session_state:
 # dropdown box
 st.subheader("Select your hotel: ")
 
-#defining a function to call api to get the prediction
-def call_api():
 
-    #user input: hotel name
-    params = dict(hotel_name=hotel_selected)
-
-    # get the json data from api:
-    revusum_api_url = 'https://teamworkmakeswetdream-tddniu6ceq-ew.a.run.app/'
-    response = requests.get(revusum_api_url, params=params)
-
-    #return_dict = response.json()
 
 hotel_selected = st.selectbox(
         " ",
-        ("  ---Your Hotel Choice---  ", "Village Hotel Albert Court by Far East Hospitality", "Marian Hotel", "Chinatown One"),
+        (hotel_list),
         label_visibility = 'collapsed',
-        on_change=reset_progress_bar
 )
-
-### dummy data
-# return_dict = dict()
-# return_dict.update({'location':0.82, 'service':0.72, 'breakfast':0.5, 'bed':0.3, 'cleanliness':0.91,
-# 'Positive_Review': "The bed was so comfy, and the bathroom was good for the people who used a shataf and for foreign people.the staff were also really nice. location was good, metro walking distance, shops and restaurants close by. comfortable bed, quite spacious for singapore, good air-conditioning - had tea and coffee making facilities and a fridge. location was good close to station and short ride to gardens by the bay. staff were great especially friendly johan, who seemed to be always there when we needed assistance, very helpful. 1 minute walking from little india, plenty of indian restaurants, money exchange, shopping area, mustafa",
-# 'Negative_Review': "Stayed for 7 days so a bit more variety in breakfast food especially the fruit would be nice but again for the price it was fine. it took some time to get hot water when taking shower. restaurant closed quite early and no option to get food late at night within hotel. wifi in room was poor but hotel did provide a spare wifi gadget so it worked out okay. almost good but an aircontrol at my room didn't work a little bit so i feeled a little hot."
-
-### dummy data version- end
-
-
-
-#color of keywords
-Pos_color = "#afa"
-Neg_color = "#faa"
-
-
-# st.write(return_dict)
-# st.write(type(return_dict))
-
-# keywords_list=[]
-# for key, value in return_dict.items():
-#     if key == 'Positive_Review':
-#         positive_sum = value
-#     elif key == 'Negative_Review':
-#         negative_sum = str(value)
-#     else:
-#         if float(value) > 0.5:
-#             keywords_list.append((key, value, Pos_color))
-#         else:
-#             keywords_list.append((key, value, Neg_color))
-
-
+## if hotel is selected, show the result
+if hotel_selected != default_hotel_name:
+    positive_sum, negative_sum = process_result(hotel_selected)
+##
 
 
 @dataclass
@@ -104,20 +101,20 @@ while p.progress < 100:
     # my_bar.progress(p.progress, text=f"Progress: {p.progress}%")
 
 
-
-
 st.header("Hot topics: ")
-annotated_text(
-    [
-    annotation("staff", "80%", font_size='20px', background="#afa"),
-    annotation("   ", styles="padding-right: 50px; background-color: #FFFFFF;"),
-    annotation("room", "70%", font_size='20px', background="#afa"),
-    annotation("   ", styles="padding-right: 50px; background-color: #FFFFFF;"),
-    annotation("location", "80%", font_size='20px', background="#afa"),
-    annotation("   ", styles="padding-right: 50px; background-color: #FFFFFF;"),
-    annotation("breakfast", "10%", font_size='20px', background="#faa")
-    ]
-)
+annotated_text(keywords_list)
+
+# annotated_text(
+#     [
+#     annotation("staff", "80%", font_size='20px', background="#afa"),
+#     annotation("   ", styles="padding-right: 50px; background-color: #FFFFFF;"),
+#     annotation("room", "70%", font_size='20px', background="#afa"),
+#     annotation("   ", styles="padding-right: 50px; background-color: #FFFFFF;"),
+#     annotation("location", "80%", font_size='20px', background="#afa"),
+#     annotation("   ", styles="padding-right: 50px; background-color: #FFFFFF;"),
+#     annotation("breakfast", "10%", font_size='20px', background="#faa")
+#     ]
+# )
 #annotation("staff", "80%", color="#afa", font_size='20px', font_family="Comic Sans MS", border="2px dashed red"),
 
 
