@@ -21,6 +21,7 @@ def process_result(hotel_selected):
     params = dict(hotel_name=hotel_selected)
     response = requests.get(url, params=params)
     return_dict = response.json()
+
     for key, value in return_dict.items():
         if key == 'Positive_Review':
             positive_sum = value
@@ -30,13 +31,15 @@ def process_result(hotel_selected):
             value_str = f'{value * 100} %'
             key = key.capitalize()
             if value > 0.5:
-                keywords_list.append((key, value_str, Pos_color))
+                keywords_list.append(annotation(key, value_str, font_size='20px', background=Pos_color))
             else:
-                keywords_list.append((key, value_str, Neg_color))
+                keywords_list.append(annotation(key, value_str, font_size='20px', background=Neg_color))
+            keywords_list.append(annotation('   ', styles='padding-right: 50px; background-color: #FFFFFF;'))
     return positive_sum, negative_sum
 
 def load_hotel_name():
-    url = os.getcwd() + '/cleaned_test_data_5.pkl'
+    url = os.getcwd() + '/website/cleaned_test_data_5.pkl' #streamlit cloud environment
+    #url = os.getcwd() + '/cleaned_test_data_5.pkl' #local environment
     raw_df = pd.read_pickle(url)
     hotel_list = [default_hotel_name]
     for hotel_name in raw_df['Hotel_Name'].unique():
