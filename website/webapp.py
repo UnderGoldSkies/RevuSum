@@ -52,8 +52,8 @@ RevuSum is a cutting-edge web app that simplifies hotel selection. Powered by AI
 """)
 
 
-# img = Image.open('website/img/village1.jpeg')    #streamlit cloud environment
-img = Image.open('img/village1.jpeg')  #local environment
+img = Image.open('website/img/village1.jpeg')    #streamlit cloud environment
+# img = Image.open('img/village1.jpeg')  #local environment
 st.image(img)
 
 #submit button
@@ -119,23 +119,23 @@ annotated_text(keywords_list)
 
 
 # # all the varibles:
-positive_sum = """The bed was so comfy, and the bathroom was good for the people who used a shataf
-                 and for foreign people.the staff were also really nice. location was good,
-                 metro walking distance, shops and restaurants close by. comfortable bed,
-                 quite spacious for singapore, good air-conditioning - had tea and coffee making
-                 facilities and a fridge. location was good close to station and short ride to gardens by the bay.
-                 staff were great especially friendly johan, who seemed to be always there when we needed assistance,
-                 very helpful. 1 minute walking from little india, plenty of indian restaurants, money exchange,
-                 shopping area, mustafa
-            """
-negative_sum = """The room was very small and the bathroom was not clean. the room was very small and the bathroom was not clean."""
+# positive_sum = """The bed was so comfy, and the bathroom was good for the people who used a shataf
+#                  and for foreign people.the staff were also really nice. location was good,
+#                  metro walking distance, shops and restaurants close by. comfortable bed,
+#                  quite spacious for singapore, good air-conditioning - had tea and coffee making
+#                  facilities and a fridge. location was good close to station and short ride to gardens by the bay.
+#                  staff were great especially friendly johan, who seemed to be always there when we needed assistance,
+#                  very helpful. 1 minute walking from little india, plenty of indian restaurants, money exchange,
+#                  shopping area, mustafa
+#             """
+# negative_sum = """The room was very small and the bathroom was not clean. the room was very small and the bathroom was not clean."""
 
 st.header("Review Summary: ")
 with st.container():
     image_col, text_col = st.columns((0.2,2))
     with image_col:
-        # img = Image.open('website/img/thumbsup.jpeg')    #streamlit cloud environment
-        img = Image.open('img/thumbsup.jpeg')  #local environment
+        img = Image.open('website/img/thumbsup.jpeg')    #streamlit cloud environment
+        # img = Image.open('img/thumbsup.jpeg')  #local environment
         st.image(img)
 
 
@@ -147,8 +147,8 @@ with st.container():
 with st.container():
     image_col, text_col = st.columns((0.2,2))
     with image_col:
-        # img = Image.open('website/img/thumbsdown.jpeg')    #streamlit cloud environment
-        img = Image.open('img/thumbsdown.jpeg')  #local environment
+        img = Image.open('website/img/thumbsdown.jpeg')    #streamlit cloud environment
+        # img = Image.open('img/thumbsdown.jpeg')  #local environment
         st.image(img)
 
     with text_col:
