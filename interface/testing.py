@@ -1,18 +1,15 @@
 import numpy as np
 import pandas as pd
 import string
-import ast
 import os
+import pickle
 from nltk.corpus import stopwords
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from sklearn.utils import shuffle
-import pickle
 from timeit import default_timer as timer
-
-
-
+from ml_logic import params
 
 
 
@@ -50,7 +47,6 @@ def test_preprocessing(df):
 
     return shuffle_df
 
-
 #training functions
 def combine_and_label(df):
 
@@ -58,10 +54,8 @@ def combine_and_label(df):
     Combining both positive and negative reviews
     positive label with 1, negative label with 0
     """
-
-    #Split negative and positive columns into two Dataframe
-    negative_df = pd.DataFrame(df.Negative_Review)
-    positive_df = pd.DataFrame(df.Positive_Review)
+    negative_df = pd.DataFrame(df[['Hotel_Name', 'Negative_Review']])
+    positive_df = pd.DataFrame(df[['Hotel_Name', 'Positive_Review']])
 
     #Standardize Column names to review
     negative_df = negative_df.rename(columns={'Negative_Review': 'Review'})
@@ -75,11 +69,32 @@ def combine_and_label(df):
     negative_df['Label'] = [0] * num_negative_rows
     positive_df['Label'] = [1] * num_positive_rows
 
-    #Combine both dataframe together to form dataset
-    combined_df = pd.concat([negative_df, positive_df], axis=0,ignore_index=True)
+    # Concate both
+    result = pd.concat([positive_df, negative_df], axis=0)
+
+    # #Split negative and positive columns into two Dataframe
+    # negative_df = pd.DataFrame(df.Negative_Review)
+    # positive_df = pd.DataFrame(df.Positive_Review)
+
+    # #Standardize Column names to review
+    # negative_df = negative_df.rename(columns={'Negative_Review': 'Review'})
+    # positive_df = positive_df.rename(columns={'Positive_Review': 'Review'})
+
+    # # Get the number of rows in the DataFrame
+    # num_negative_rows = negative_df.shape[0]
+    # num_positive_rows = positive_df.shape[0]
+
+    # # Create a new column with all 0 and 1 values based on positive/ negative
+    # negative_df['Label'] = [0] * num_negative_rows
+    # positive_df['Label'] = [1] * num_positive_rows
+
+
+
+    # #Combine both dataframe together to form dataset
+    # combined_df = pd.concat([negative_df, positive_df], axis=0,ignore_index=True)
 
     #Shuffle dataframe
-    shuffle_df = shuffle(combined_df)
+    shuffle_df = shuffle(result)
 
     return shuffle_df
 
@@ -105,11 +120,10 @@ def basic_preprocessing_data(df):
     """
     Applying preprocessing on every sentence in reviews
     """
-
+    df.dropna(subset=['Review'], inplace=True)
     df['Review'] = df['Review'].apply(preprocessing)
 
     return df
-
 
 def filter_reviews(df):
 
@@ -157,7 +171,7 @@ def lemm_data(df):
     return df
 
 
-
+#Deployment prediction functions
 def prediction_all_in_one(test_file_path):
 
     """
@@ -236,26 +250,15 @@ def preprocess_of_test_data(dataframe):
 
 def prediction_of_test_data(preprocess_df):
 
-    start = timer()
-    #retrieving model from filepath
-    model_file_path = '~/code/TechLah/RevuSum/ML model/hash_nb_model(92%).pkl'
-    # Expand the tilde (~) character and get the absolute path
-    model_file_path = os.path.expanduser(model_file_path)
-
-    # Load the model from the file
-    with open(model_file_path, 'rb') as file:
+    with open(params.SENTIMENT_MODEL_PATH, 'rb') as file:
         hash_nb_model = pickle.load(file)
 
-    end = timer()
-    print(f"importing model = {round(end-start,3)}secs" )
+    #print(f"importing model = {round(end-start,3)}secs" )
 
     test_X = preprocess_df['Review']
     test_y = preprocess_df['Label']
 
-    start = timer()
     pred_y = hash_nb_model.predict(test_X)
 
-    end = timer()
-    print(f"predicting outcome = {round(end-start,3)}secs" )
 
-    return pred_y, test_y
+    return test_X, pred_y, test_y
