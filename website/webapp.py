@@ -37,7 +37,7 @@ def process_result(hotel_selected):
         elif key == 'Negative_Review':
             negative_sum = value
         else:
-            value_str = f'{round(value * 100)} %'
+            value_str = f'{round(value * 100)} %✅'
             key = key.capitalize()
             if value > 0.5:
                 keywords_list.append(annotation(key, value_str, font_size='20px', background=Pos_color))
