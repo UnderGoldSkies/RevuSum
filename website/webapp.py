@@ -58,6 +58,34 @@ def load_hotel_name():
 #get the hotel name list
 hotel_list = load_hotel_name()
 
+# define a function to show hotel top html content
+def top_html(hotel_selected):
+    address = '277 Orchard Road, Orchard, 238858 Singapore, Singapore'
+    total_reviews = '2,294'
+    score_text = 'Very Good'
+    score_point = '8.4'
+
+    top_html = f"""<div><h2  style="display: flex; justify-content: space-between; align-items: center; font-size: 24px; padding:0px; margin:0%">{hotel_selected}</h2></div>
+<div style="display: flex; justify-content: space-between; align-items: center; font-size: 15px; ">
+  <div style="flex: 1; padding-right: 10px;">{address}</div>
+  <div style="display: flex; justify-content: space-between; align-items: center;  padding: 5px;">
+    <div style="display: flex; flex-direction: column; padding: 5px;">
+      <div style="font-size: 16px; font-weight: bold;">{score_text}</div>
+      <div style="font-size: 12px;">{total_reviews} reviews</div>
+    </div>
+    <div style="font-size: 16px; font-weight: bold;background-color: blue; color: white; padding: 5px;">{score_point}</div>
+  </div>
+</div>
+
+<div style="display: flex; justify-content: space-between;">
+  <div style="display: flex; flex-direction: column; flex: 1; margin-right: 10px;">
+    <div><img src="https://cf2.bstatic.com/xdata/images/hotel/max500/327961860.jpg?k=40c2e566b3c5f462f8a18df6cd0476ca1334801767097d41b353b96259327562&amp;o=&amp;hp=1" style="width: 100%; height: auto; margin-top: auto; margin-bottom: 10px;"></div>
+    <div></div><img src="https://cf2.bstatic.com/xdata/images/hotel/max500/327961868.jpg?k=284648f1385a9ae8e8c74ebf0b7d20583d4f38289121c17f407f23d8dbbea33b&amp;o=&amp;hp=1" style="width: 100%; height: auto; margin-top: auto;">
+  </div>
+  <div style="display: flex; align-items: flex-end; flex: 2;">
+    <img src="https://cf2.bstatic.com/xdata/images/hotel/max1024x768/326893205.jpg?k=977021538d51e8e7d1ee65fd16d26db58547c263f681d78ad6f3f8bb41837865&amp;o=&amp;hp=1" style="width: 100%; height: auto;">
+  </div>
+</div>"""
 
 st.title("RevuSUM")
 st.markdown("""
@@ -127,26 +155,3 @@ if hotel_selected != default_hotel_name:
             st.write(negative_sum)
 
 ##
-
-
-# @dataclass
-# class Program:
-#     progress: int = 0
-#     def predict(self):
-#         for i in [10, 30, 50, 70, 100]:
-#             self.progress = i
-#             sleep(1)
-#             my_bar.progress(p.progress, text=f"Progress: {p.progress}%")
-
-#     def increment(self):
-#         self.progress += 1
-#         sleep(0.1)
-
-
-# my_bar = st.progress(0, text="Operation in progress. Please wait...")
-
-# p = Program()
-
-# while p.progress < 100:
-#     p.predict()
-#     # my_bar.progress(p.progress, text=f"Progress: {p.progress}%")
