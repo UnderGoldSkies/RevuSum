@@ -40,15 +40,15 @@ def process_result(hotel_selected):
             value_str = f'{round(value * 100)} %✔️'
             key = key.capitalize()
             if value > 0.5:
-                keywords_list.append(annotation(key, value_str, font_size='20px', background=Pos_color))
+                keywords_list.append(annotation(key, value_str, font_size='18px', background=Pos_color))
             else:
-                keywords_list.append(annotation(key, value_str, font_size='20px', background=Neg_color))
-            keywords_list.append(annotation('   ', styles='padding-right: 50px; background-color: #FFFFFF;'))
+                keywords_list.append(annotation(key, value_str, font_size='18px', background=Neg_color))
+            keywords_list.append(annotation('   ', styles='padding-right: 40px; background-color: #FFFFFF;'))
     return positive_sum, negative_sum
 
 def load_hotel_name():
     url = os.getcwd() +  '/website/cleaned_test_data_5.pkl' #streamlit cloud environment
-    #url = '/cleaned_test_data_5.pkl' #local environment
+    # url = 'cleaned_test_data_5.pkl' #local environment
     raw_df = pd.read_pickle(url)
     hotel_list = [default_hotel_name]
     for hotel_name in raw_df['Hotel_Name'].unique():
@@ -64,8 +64,12 @@ def top_html(hotel_selected):
     total_reviews = '2,294'
     score_text = 'Very Good'
     score_point = '8.4'
+    #create a image url list
+    image_urls = ['https://cf2.bstatic.com/xdata/images/hotel/max500/327961860.jpg?k=40c2e566b3c5f462f8a18df6cd0476ca1334801767097d41b353b96259327562&amp;o=&amp;hp=1',
+                      'https://cf2.bstatic.com/xdata/images/hotel/max500/327961868.jpg?k=284648f1385a9ae8e8c74ebf0b7d20583d4f38289121c17f407f23d8dbbea33b&amp;o=&amp;hp=1',
+                      'https://cf2.bstatic.com/xdata/images/hotel/max1024x768/326893205.jpg?k=977021538d51e8e7d1ee65fd16d26db58547c263f681d78ad6f3f8bb41837865&amp;o=&amp;hp=1']
 
-    top_html = f"""<div><h2  style="display: flex; justify-content: space-between; align-items: center; font-size: 24px; padding:0px; margin:0%">{hotel_selected}</h2></div>
+    top_html = f"""<div><h2  style="display: flex; justify-content: space-between; align-items: center; font-family: 'Avenir Next'; font-size: 24px; padding:0px; margin:0%">{hotel_selected}</h2></div>
                 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 15px; ">
                 <div style="flex: 1; padding-right: 10px;">{address}</div>
                 <div style="display: flex; justify-content: space-between; align-items: center;  padding: 5px;">
@@ -76,14 +80,13 @@ def top_html(hotel_selected):
                     <div style="font-size: 16px; font-weight: bold;background-color: blue; color: white; padding: 5px;">{score_point}</div>
                 </div>
                 </div>
-
                 <div style="display: flex; justify-content: space-between;">
                 <div style="display: flex; flex-direction: column; flex: 1; margin-right: 10px;">
-                    <div><img src="https://cf2.bstatic.com/xdata/images/hotel/max500/327961860.jpg?k=40c2e566b3c5f462f8a18df6cd0476ca1334801767097d41b353b96259327562&amp;o=&amp;hp=1" style="width: 100%; height: auto; margin-top: auto; margin-bottom: 10px;"></div>
-                    <div></div><img src="https://cf2.bstatic.com/xdata/images/hotel/max500/327961868.jpg?k=284648f1385a9ae8e8c74ebf0b7d20583d4f38289121c17f407f23d8dbbea33b&amp;o=&amp;hp=1" style="width: 100%; height: auto; margin-top: auto;">
+                    <div><img src="{image_urls[0]}" style="width: 100%; height: auto; margin-top: auto; margin-bottom: 10px;"></div>
+                    <div></div><img src="{image_urls[1]}" style="width: 100%; height: auto; margin-top: auto;">
                 </div>
                 <div style="display: flex; align-items: flex-end; flex: 2;">
-                    <img src="https://cf2.bstatic.com/xdata/images/hotel/max1024x768/326893205.jpg?k=977021538d51e8e7d1ee65fd16d26db58547c263f681d78ad6f3f8bb41837865&amp;o=&amp;hp=1" style="width: 100%; height: auto;">
+                    <img src="{image_urls[2]}" style="width: 100%; height: auto;">
                 </div>
                 </div>"""
     return top_html
@@ -93,9 +96,7 @@ st.markdown("""
 RevuSum is a cutting-edge web app that simplifies hotel selection. Powered by AI, it generates concise summaries and insightful information from real visitor reviews. Say goodbye to manual review sifting - with RevuSum, access relevant summaries highlighting room quality, location, breakfast, cleanliness, and more. Make informed holiday choices with RevuSum's comprehensive insights.
 """)
 
-img = Image.open('website/img/village1.jpeg')    #streamlit cloud environment
-# img = Image.open('img/village1.jpeg')  #local environment
-st.image(img)
+
 
 
 # dropdown box
@@ -116,7 +117,7 @@ if hotel_selected != default_hotel_name:
     # start the progress bar
     for i in [1, 3, 5, 7]:
         progress = i
-        time.sleep(0.5)
+        time.sleep(0.1)
         my_bar.progress(progress, text=f"Checking for {hotel_selected}. Please wait... {progress}%")
 
 
@@ -126,18 +127,18 @@ if hotel_selected != default_hotel_name:
 
     for i in [95,97,100]:
         progress = i
-        time.sleep(0.5)
+        time.sleep(1)
         my_bar.progress(progress, text=f"Progress: {progress}%")
 
     # show the top html content
     st.markdown(top_html, unsafe_allow_html=True)
 
     #To show the hotel review data
-    st.header("Hot topics: ")
+    st.subheader("Hot topics: ")
     annotated_text(keywords_list)
 
 
-    st.header("Review Summary: ")
+    st.subheader("Review Summary: ")
     with st.container():
         image_col, text_col = st.columns((0.2,2))
         with image_col:
@@ -147,7 +148,7 @@ if hotel_selected != default_hotel_name:
 
 
         with text_col:
-            st.subheader("What people like about the hotel:")
+            st.markdown('<div style="flex: 1; font-size: 20px; font-weight: bold; padding-right: 10px;">What people like about the hotel: </div>', unsafe_allow_html=True)
             st.write(positive_sum)
             #st.markdown("[Read more...](https://towardsdatascience.com/a-multi-page-interactive-dashboard-with-streamlit-and-plotly-c3182443871a)")
 
@@ -159,7 +160,11 @@ if hotel_selected != default_hotel_name:
             st.image(img)
 
         with text_col:
-            st.subheader("What people don't like about the hotel:")
+            st.markdown('<div style="flex: 1; font-size: 20px; font-weight: bold; padding-right: 10px;">What people don\'t like about the hotel: </div>', unsafe_allow_html=True)
             st.write(negative_sum)
 
 ##
+
+img = Image.open('website/img/hotel_stiched.png')    #streamlit cloud environment
+# img = Image.open('img/hotel_stiched.png')  #local environment
+st.image(img)
