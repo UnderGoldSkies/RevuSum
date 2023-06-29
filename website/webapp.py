@@ -58,10 +58,6 @@ def load_hotel_name():
 #get the hotel name list
 hotel_list = load_hotel_name()
 
-path = os.getcwd()
-test = 'test'
-st.write(path)
-st.write(test)
 
 st.title("RevuSUM")
 st.markdown("""
