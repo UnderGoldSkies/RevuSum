@@ -58,29 +58,23 @@ def load_hotel_name():
 #get the hotel name list
 hotel_list = load_hotel_name()
 
-
+path = os.getcwd()
+test = 'test'
+st.write(path)
+st.write(test)
 
 st.title("RevuSUM")
 st.markdown("""
 RevuSum is a cutting-edge web app that simplifies hotel selection. Powered by AI, it generates concise summaries and insightful information from real visitor reviews. Say goodbye to manual review sifting - with RevuSum, access relevant summaries highlighting room quality, location, breakfast, cleanliness, and more. Make informed holiday choices with RevuSum's comprehensive insights.
 """)
 
-
 img = Image.open('website/img/village1.jpeg')    #streamlit cloud environment
 # img = Image.open('img/village1.jpeg')  #local environment
 st.image(img)
 
-#submit button
-# Store the initial value of widgets in session state
-if "visibility" not in st.session_state:
-    st.session_state.visibility = "visible"
-    st.session_state.disabled = False
 
 # dropdown box
 st.subheader("Select your hotel: ")
-
-
-
 hotel_selected = st.selectbox(
         " ",
         (hotel_list),
@@ -118,31 +112,6 @@ while p.progress < 100:
 st.header("Hot topics: ")
 annotated_text(keywords_list)
 
-# annotated_text(
-#     [
-#     annotation("staff", "80%", font_size='20px', background="#afa"),
-#     annotation("   ", styles="padding-right: 50px; background-color: #FFFFFF;"),
-#     annotation("room", "70%", font_size='20px', background="#afa"),
-#     annotation("   ", styles="padding-right: 50px; background-color: #FFFFFF;"),
-#     annotation("location", "80%", font_size='20px', background="#afa"),
-#     annotation("   ", styles="padding-right: 50px; background-color: #FFFFFF;"),
-#     annotation("breakfast", "10%", font_size='20px', background="#faa")
-#     ]
-# )
-#annotation("staff", "80%", color="#afa", font_size='20px', font_family="Comic Sans MS", border="2px dashed red"),
-
-
-# # all the varibles:
-# positive_sum = """The bed was so comfy, and the bathroom was good for the people who used a shataf
-#                  and for foreign people.the staff were also really nice. location was good,
-#                  metro walking distance, shops and restaurants close by. comfortable bed,
-#                  quite spacious for singapore, good air-conditioning - had tea and coffee making
-#                  facilities and a fridge. location was good close to station and short ride to gardens by the bay.
-#                  staff were great especially friendly johan, who seemed to be always there when we needed assistance,
-#                  very helpful. 1 minute walking from little india, plenty of indian restaurants, money exchange,
-#                  shopping area, mustafa
-#             """
-# negative_sum = """The room was very small and the bathroom was not clean. the room was very small and the bathroom was not clean."""
 
 st.header("Review Summary: ")
 with st.container():
