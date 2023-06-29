@@ -109,11 +109,15 @@ if hotel_selected != default_hotel_name:
     # initiate the Progress bar
     my_bar = st.progress(0, text=f"Checking for {hotel_selected}. Please wait...")
 
+    # generate the top html content
+    top_html = top_html(hotel_selected)
+
     # start the progress bar
     for i in [1, 3, 5, 7]:
         progress = i
         time.sleep(0.5)
         my_bar.progress(progress, text=f"Checking for {hotel_selected}. Please wait... {progress}%")
+
 
     # call API
     positive_sum, negative_sum = process_result(hotel_selected)
@@ -123,6 +127,9 @@ if hotel_selected != default_hotel_name:
         progress = i
         time.sleep(0.5)
         my_bar.progress(progress, text=f"Progress: {progress}%")
+
+    # show the top html content
+    st.markdown(top_html, unsafe_allow_html=True)
 
     #To show the hotel review data
     st.header("Hot topics: ")
