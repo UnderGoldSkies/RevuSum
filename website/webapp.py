@@ -76,60 +76,77 @@ hotel_selected = st.selectbox(
         (hotel_list),
         label_visibility = 'collapsed',
 )
-## if hotel is selected, show the result
+## if a hotel is selected, show the result
 if hotel_selected != default_hotel_name:
+    # initiate the Progress bar
+    my_bar = st.progress(0, text=f"Checking for {hotel_selected}. Please wait...")
+
+    # start the progress bar
+    for i in [1, 3, 5, 7]:
+        progress = i
+        time.sleep(0.5)
+        my_bar.progress(progress, text=f"Checking for {hotel_selected}. Please wait... {progress}%")
+
+    # call API
     positive_sum, negative_sum = process_result(hotel_selected)
+
+
+    for i in [95,97,100]:
+        progress = i
+        time.sleep(0.5)
+        my_bar.progress(progress, text=f"Progress: {progress}%")
+
+    #To show the hotel review data
+    st.header("Hot topics: ")
+    annotated_text(keywords_list)
+
+
+    st.header("Review Summary: ")
+    with st.container():
+        image_col, text_col = st.columns((0.2,2))
+        with image_col:
+            img = Image.open('website/img/thumbsup.jpeg')    #streamlit cloud environment
+            # img = Image.open('img/thumbsup.jpeg')  #local environment
+            st.image(img)
+
+
+        with text_col:
+            st.subheader("What people like about the hotel:")
+            st.write(positive_sum)
+            #st.markdown("[Read more...](https://towardsdatascience.com/a-multi-page-interactive-dashboard-with-streamlit-and-plotly-c3182443871a)")
+
+    with st.container():
+        image_col, text_col = st.columns((0.2,2))
+        with image_col:
+            img = Image.open('website/img/thumbsdown.jpeg')    #streamlit cloud environment
+            # img = Image.open('img/thumbsdown.jpeg')  #local environment
+            st.image(img)
+
+        with text_col:
+            st.subheader("What people don't like about the hotel:")
+            st.write(negative_sum)
+
 ##
 
 
-@dataclass
-class Program:
-    progress: int = 0
-    def predict(self):
-        for i in [10, 30, 50, 70, 100]:
-            self.progress = i
-            sleep(1)
-            my_bar.progress(p.progress, text=f"Progress: {p.progress}%")
+# @dataclass
+# class Program:
+#     progress: int = 0
+#     def predict(self):
+#         for i in [10, 30, 50, 70, 100]:
+#             self.progress = i
+#             sleep(1)
+#             my_bar.progress(p.progress, text=f"Progress: {p.progress}%")
 
-    def increment(self):
-        self.progress += 1
-        sleep(0.1)
-
-
-my_bar = st.progress(0, text="Operation in progress. Please wait...")
-
-p = Program()
-
-while p.progress < 100:
-    p.predict()
-    # my_bar.progress(p.progress, text=f"Progress: {p.progress}%")
+#     def increment(self):
+#         self.progress += 1
+#         sleep(0.1)
 
 
-st.header("Hot topics: ")
-annotated_text(keywords_list)
+# my_bar = st.progress(0, text="Operation in progress. Please wait...")
 
+# p = Program()
 
-st.header("Review Summary: ")
-with st.container():
-    image_col, text_col = st.columns((0.2,2))
-    with image_col:
-        img = Image.open('website/img/thumbsup.jpeg')    #streamlit cloud environment
-        # img = Image.open('img/thumbsup.jpeg')  #local environment
-        st.image(img)
-
-
-    with text_col:
-        st.subheader("What people like about the hotel:")
-        st.write(positive_sum)
-        #st.markdown("[Read more...](https://towardsdatascience.com/a-multi-page-interactive-dashboard-with-streamlit-and-plotly-c3182443871a)")
-
-with st.container():
-    image_col, text_col = st.columns((0.2,2))
-    with image_col:
-        img = Image.open('website/img/thumbsdown.jpeg')    #streamlit cloud environment
-        # img = Image.open('img/thumbsdown.jpeg')  #local environment
-        st.image(img)
-
-    with text_col:
-        st.subheader("What people don't like about the hotel:")
-        st.write(negative_sum)
+# while p.progress < 100:
+#     p.predict()
+#     # my_bar.progress(p.progress, text=f"Progress: {p.progress}%")
