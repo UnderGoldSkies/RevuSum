@@ -47,7 +47,7 @@ def process_result(hotel_selected):
     return positive_sum, negative_sum
 
 def load_hotel_name():
-    url = 'website/cleaned_test_data_5.pkl' #streamlit cloud environment
+    url = '/app/revusum/website/cleaned_test_data_5.pkl' #streamlit cloud environment
     #url = '/cleaned_test_data_5.pkl' #local environment
     raw_df = pd.read_pickle(url)
     hotel_list = [default_hotel_name]
