@@ -16,20 +16,20 @@ default_hotel_name = "  ---Your Hotel Choice---  "
 Pos_color = "#afa"
 Neg_color = "#faa"
 
-#dummy data for testing
-return_dict = dict()
-return_dict.update({'location':0.82, 'service':0.755, 'breakfast':0.567, 'bed':0.321, 'cleanliness':0.91,
-'Positive_Review': "The bed was so comfy, and the bathroom was good for the people who used a shataf and for foreign people.the staff were also really nice. location was good, metro walking distance, shops and restaurants close by. comfortable bed, quite spacious for singapore, good air-conditioning - had tea and coffee making facilities and a fridge. location was good close to station and short ride to gardens by the bay. staff were great especially friendly johan, who seemed to be always there when we needed assistance, very helpful. 1 minute walking from little india, plenty of indian restaurants, money exchange, shopping area, mustafa",
-'Negative_Review': "Stayed for 7 days so a bit more variety in breakfast food especially the fruit would be nice but again for the price it was fine. it took some time to get hot water when taking shower. restaurant closed quite early and no option to get food late at night within hotel. wifi in room was poor but hotel did provide a spare wifi gadget so it worked out okay. almost good but an aircontrol at my room didn't work a little bit so i feeled a little hot."
-})
+# #dummy data for testing, 111
+# return_dict = dict()
+# return_dict.update({'location':0.82, 'service':0.755, 'breakfast':0.567, 'bed':0.321, 'cleanliness':0.91,
+# 'Positive_Review': "The bed was so comfy, and the bathroom was good for the people who used a shataf and for foreign people.the staff were also really nice. location was good, metro walking distance, shops and restaurants close by. comfortable bed, quite spacious for singapore, good air-conditioning - had tea and coffee making facilities and a fridge. location was good close to station and short ride to gardens by the bay. staff were great especially friendly johan, who seemed to be always there when we needed assistance, very helpful. 1 minute walking from little india, plenty of indian restaurants, money exchange, shopping area, mustafa",
+# 'Negative_Review': "Stayed for 7 days so a bit more variety in breakfast food especially the fruit would be nice but again for the price it was fine. it took some time to get hot water when taking shower. restaurant closed quite early and no option to get food late at night within hotel. wifi in room was poor but hotel did provide a spare wifi gadget so it worked out okay. almost good but an aircontrol at my room didn't work a little bit so i feeled a little hot."
+# })
 
 
 def process_result(hotel_selected):
-    # #call api
-    # url = 'https://teamworkmakeswetdream-tddniu6ceq-ew.a.run.app/predict'
-    # params = dict(hotel_name=hotel_selected)
-    # response = requests.get(url, params=params)
-    # return_dict = response.json()
+    #call api, 111
+    url = 'https://teamworkmakeswetdream-tddniu6ceq-ew.a.run.app/predict'
+    params = dict(hotel_name=hotel_selected)
+    response = requests.get(url, params=params)
+    return_dict = response.json()
 
     for key, value in return_dict.items():
         if key == 'Positive_Review':
@@ -48,7 +48,7 @@ def process_result(hotel_selected):
 
 def load_hotel_name():
     url = os.getcwd() +  '/website/cleaned_test_data_5.pkl' #streamlit cloud environment
-    # url = 'cleaned_test_data_5.pkl' #local environment
+    # url = 'cleaned_test_data_5.pkl' #  environment
     raw_df = pd.read_pickle(url)
     hotel_list = [default_hotel_name]
     for hotel_name in raw_df['Hotel_Name'].unique():
