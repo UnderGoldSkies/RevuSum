@@ -118,7 +118,7 @@ if hotel_selected != default_hotel_name:
     for i in [1, 3, 5, 7]:
         progress = i
         time.sleep(0.1)
-        my_bar.progress(progress, text=f"Checking for {hotel_selected}. Please wait... {progress}%")
+        my_bar.progress(progress, text=f"Checking for {hotel_selected}. May take up to 3 min, please wait ... {progress}%")
 
 
     # call API
