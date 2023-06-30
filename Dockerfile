@@ -5,7 +5,7 @@ ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
 
-RUN apt-get update && apt-get install -y locales && \
+RUN apt-get update && apt-get install -y locales nano && \
     locale-gen en_US.UTF-8
 
 COPY . /app
@@ -13,7 +13,7 @@ WORKDIR /app
 
 RUN pip install --upgrade setuptools pip && \
     pip install -r requirements.txt && \
-    pip install nltk yake transformers sentencepiece torch pegasus distilbert-punctuator && \
+    pip install nltk yake transformers sentencepiece torch && \
     python -m nltk.downloader -d /home/nltk_data stopwords punkt wordnet
 
 CMD uvicorn api.fast:app --host 0.0.0.0 --port $PORT

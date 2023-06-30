@@ -72,28 +72,7 @@ def combine_and_label(df):
     # Concate both
     result = pd.concat([positive_df, negative_df], axis=0)
 
-    # #Split negative and positive columns into two Dataframe
-    # negative_df = pd.DataFrame(df.Negative_Review)
-    # positive_df = pd.DataFrame(df.Positive_Review)
-
-    # #Standardize Column names to review
-    # negative_df = negative_df.rename(columns={'Negative_Review': 'Review'})
-    # positive_df = positive_df.rename(columns={'Positive_Review': 'Review'})
-
-    # # Get the number of rows in the DataFrame
-    # num_negative_rows = negative_df.shape[0]
-    # num_positive_rows = positive_df.shape[0]
-
-    # # Create a new column with all 0 and 1 values based on positive/ negative
-    # negative_df['Label'] = [0] * num_negative_rows
-    # positive_df['Label'] = [1] * num_positive_rows
-
-
-
-    # #Combine both dataframe together to form dataset
-    # combined_df = pd.concat([negative_df, positive_df], axis=0,ignore_index=True)
-
-    #Shuffle dataframe
+    # Shuffle the df
     shuffle_df = shuffle(result)
 
     return shuffle_df

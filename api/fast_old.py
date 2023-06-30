@@ -1,14 +1,12 @@
 import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from interface.main import preprocess_of_test_data
+from interface.testing import preprocess_of_test_data
 from ml_logic.params import *
 from ml_logic.sentiment_analysis import calculate_percentage, keywords_extract
-from ml_logic.review_pegasus import main, load_bart_tokenizer
+from ml_logic.review_pegasus import main, load_tokenizer
 import pickle
-import torch
 from timeit import default_timer as timer
-
 
 global df
 global sentiment_model
@@ -16,8 +14,6 @@ global pegasus_model
 global pegasus_tokenizer
 global hotel_df
 global preprocess_df
-global cpu_bart_model
-global bart_tokenizer
 
 print("Fast API Started ✅")
 
@@ -31,12 +27,17 @@ with open(SENTIMENT_MODEL_PATH, 'rb') as file:
 print("Sentiment Model Loaded ✅")
 
 # Load the pegasus model from the file
-with open(CPU_BART_MODEL_PATH, 'rb') as file:
-    cpu_bart_model = pickle.load(file)
-print("cpu_bart_model Loaded ✅")
+with open(PEGASUS_MODEL_PATH, 'rb') as file:
+    pegasus_model = pickle.load(file)
+print("Pegasus Model Loaded ✅")
 
-bart_tokenizer = load_bart_tokenizer()
-print("bart_tokenizer Loaded ✅")
+# # Load the pegasus tokenizer from the file
+# with open(PEGASUS_TOKENIZER_PATH, 'rb') as file:
+#     pegasus_tokenizer = pickle.load(file)
+# print("Pegasus Tokenizer Loaded ✅")
+
+pegasus_tokenizer = load_tokenizer()
+print("Pegasus Tokenizer Loaded ✅")
 
 preprocess_df = preprocess_of_test_data(df)
 
@@ -52,9 +53,34 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
+#http://127.0.0.1:8000/predict?hotel_name=ibis%20Styles%20Singapore%20Albert
 @app.get("/predict")
 def predict(hotel_name: str):
 
+    # # Load the test data from the file
+    # df = pd.read_pickle(LOCAL_TEST_DATA_PATH)
+    # print("Test data Loaded ✅")
+
+    # # Load the model from the file
+    # with open(SENTIMENT_MODEL_PATH, 'rb') as file:
+    #     sentiment_model = pickle.load(file)
+    # print("Sentiment Model Loaded ✅")
+
+    # # Load the pegasus model from the file
+    # with open(PEGASUS_MODEL_PATH, 'rb') as file:
+    #     pegasus_model = pickle.load(file)
+    # print("Pegasus Model Loaded ✅")
+
+    # # # Load the pegasus tokenizer from the file
+    # # with open(PEGASUS_TOKENIZER_PATH, 'rb') as file:
+    # #     pegasus_tokenizer = pickle.load(file)
+    # # print("Pegasus Tokenizer Loaded ✅")
+
+    # pegasus_tokenizer = load_tokenizer()
+    # print("Pegasus Tokenizer Loaded ✅")
+
+    # hotel_df = df[df.Hotel_Name == hotel_name]
+    # preprocess_df = preprocess_of_test_data(hotel_df)
     hotel_df = preprocess_df[preprocess_df.Hotel_Name == hotel_name]
     test_X = hotel_df['Review']
     test_y = hotel_df['Label']
@@ -85,9 +111,8 @@ def predict(hotel_name: str):
     print(f"Dictionary updated with %Positive reviews for keywords ✅ {round(end-start,3)}secs ")
 
 
-    model = cpu_bart_model
     start = timer()
-    (positive_reviews, negative_reviews) = main(df, hotel_name, bart_tokenizer, model)
+    (positive_reviews, negative_reviews) = main(df, hotel_name, pegasus_tokenizer, pegasus_model)
     end = timer()
     print(f"Summary Completed ✅ {round(end-start,3)}secs")
 
