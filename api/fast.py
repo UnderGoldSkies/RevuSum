@@ -4,20 +4,18 @@ from fastapi.middleware.cors import CORSMiddleware
 from interface.main import preprocess_of_test_data
 from ml_logic.params import *
 from ml_logic.sentiment_analysis import calculate_percentage, keywords_extract
-from ml_logic.review_pegasus import main, load_bart_tokenizer
+from ml_logic.review_pegasus import main
 import pickle
-import torch
+# import torch
 from timeit import default_timer as timer
 
 
 global df
 global sentiment_model
-global pegasus_model
-global pegasus_tokenizer
 global hotel_df
 global preprocess_df
-global cpu_bart_model
-global bart_tokenizer
+# global cpu_bart_model
+# global bart_tokenizer
 
 print("Fast API Started ✅")
 
@@ -26,20 +24,18 @@ df = pd.read_pickle(LOCAL_TEST_DATA_PATH)
 print("Test data Loaded ✅")
 
 # Load the model from the file
-with open(SENTIMENT_MODEL_PATH, 'rb') as file:
-    sentiment_model = pickle.load(file)
-print("Sentiment Model Loaded ✅")
+# Temporary comment out by Haris
+# with open(SENTIMENT_MODEL_PATH, 'rb') as file:
+#     sentiment_model = pickle.load(file)
+# print("Sentiment Model Loaded ✅")
 
-# Load the pegasus model from the file
-with open(CPU_BART_MODEL_PATH, 'rb') as file:
-    cpu_bart_model = pickle.load(file)
-print("cpu_bart_model Loaded ✅")
 
-bart_tokenizer = load_bart_tokenizer()
-print("bart_tokenizer Loaded ✅")
 
 preprocess_df = preprocess_of_test_data(df)
 
+#set the google auth env variable
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_CREDENTIAL_PATH
+print('Google credential assigned ✅')
 
 app = FastAPI()
 
@@ -84,10 +80,8 @@ def predict(hotel_name: str):
     end = timer()
     print(f"Dictionary updated with %Positive reviews for keywords ✅ {round(end-start,3)}secs ")
 
-
-    model = cpu_bart_model
     start = timer()
-    (positive_reviews, negative_reviews) = main(df, hotel_name, bart_tokenizer, model)
+    (positive_reviews, negative_reviews) = main(df, hotel_name)
     end = timer()
     print(f"Summary Completed ✅ {round(end-start,3)}secs")
 
@@ -99,7 +93,28 @@ def predict(hotel_name: str):
 
     return return_dict
 
+@app.get('/temp_summary')
+def temporary_summary(hotel_name: str):
+    return_dict = dict()
+    start = timer()
+    (positive_reviews, negative_reviews) = main(df, hotel_name)
+    end = timer()
+    print(f"Summary Completed ✅ {round(end-start,3)}secs")
+
+    start = timer()
+    return_dict.update({"Positive_Review":positive_reviews, "Negative_Review":negative_reviews})
+    end = timer()
+    print(f"Dictionary updated with Summarized reviews ✅ {round(end-start,3)}secs")
+    return return_dict
 
 @app.get("/")
 def root():
     return {'greeting': 'Hello'}
+
+# (Unused) Load the pegasus model from the file
+# with open(CPU_BART_MODEL_PATH, 'rb') as file:
+#     cpu_bart_model = pickle.load(file)
+# print("cpu_bart_model Loaded ✅")
+
+# bart_tokenizer = load_bart_tokenizer()
+# print("bart_tokenizer Loaded ✅")

@@ -1,32 +1,28 @@
-# from dbpunctuator.inference import Inference, InferenceArguments
-# from dbpunctuator.utils import DEFAULT_ENGLISH_TAG_PUNCTUATOR_MAP
-
 import pandas as pd
-import string
 import os
-import torch
-from transformers import BartTokenizer, BartForConditionalGeneration
 import time
 import re
-# import concurrent.futures
+import vertexai
+from vertexai.language_models import TextGenerationModel
+# !pip install vertexai
+# !pip install "shapely<2.0.0"
+# !pip install google-cloud-aiplatform >= 1.26.0
+# vertexai==0.0.1
 
-def main(df, hotel_name, bart_tokenizer, model):
+def main(df, hotel_name):
     pos_reviews, neg_reviews = get_reviews(df, hotel_name)
-    pos_encoded_summary, neg_encoded_summary = process_review(bart_tokenizer, model, pos_reviews, neg_reviews)
-    # positive_reviews, negative_reviews = generate_punctuation(pos_encoded_summary, neg_encoded_summary)
-    return clean_summary(pos_encoded_summary, neg_encoded_summary)
-
+    positive_summary, negative_summary = process_review(pos_reviews, neg_reviews)
+    return (positive_summary, negative_summary)
 
 def load_data():
     #pull the data
-    url = os.getcwd() + '/raw_data/cleaned_test_data_5.pkl'
+
+    path = os.getcwd()
+    url = os.path.join(path, '..', 'data', 'cleaned_test_data_5.pkl')
     raw_df = pd.read_pickle(url)
     return raw_df
 
-# def define_device(self):
-#     self.device = "cuda" if torch.cuda.is_available() else "cpu"
-
-def clean(text):
+def first_clean(text):
     if len(text.split()) >= 5:
         text = text.strip()
         text = text.strip('.') +'.'
@@ -34,148 +30,56 @@ def clean(text):
 
 def turn_rev_series_to_str(review_series):
     review_str = ''
-    rev_length = len(review_series)
+    rev_length = min(249, len(review_series))
     counter = 1
     for item in review_series.values:
+        item = clean_text(item)
         if counter == rev_length:
             review_str += item
+            break
         else:
-            review_str += item + '\n'
+            review_str += item + ' '
         counter += 1
     return review_str
 
+def clean_text(text):
+    #remove multiple whitespace
+    text = re.sub('\s+', ' ', text)
+
+    #remove multiple .
+    text = re.sub('\.+', '.', text)
+
+    #capitalize after first letter, full stop and space
+    text = text.lower().capitalize()
+
+    text = re.sub('\.\s*([a-z])', lambda x: '. ' + x.group(1).capitalize(), text)
+    return text.strip()
+
 def get_reviews(raw_df, hotel_name):
     hotel_df = raw_df.query(f'Hotel_Name == "{hotel_name}"')
-    positive_reviews = hotel_df['Positive_Review'].dropna().apply(clean).dropna()
-    negative_reviews = hotel_df['Negative_Review'].dropna().apply(clean).dropna()
+    positive_reviews = hotel_df['Positive_Review'].dropna().apply(first_clean).dropna()
+    negative_reviews = hotel_df['Negative_Review'].dropna().apply(first_clean).dropna()
     pos_reviews = turn_rev_series_to_str(positive_reviews)
     neg_reviews = turn_rev_series_to_str(negative_reviews)
     return pos_reviews, neg_reviews
 
-def load_bart_model():
-    model_name = 'facebook/bart-large'
-    bart_model = BartForConditionalGeneration.from_pretrained(model_name)
-    return bart_model
-
-def load_bart_tokenizer():
-    model_name = 'facebook/bart-large'
-    bart_tokenizer = BartTokenizer.from_pretrained(model_name)
-    return bart_tokenizer
-
-def process_review(bart_tokenizer, bart_model, pos_reviews, neg_reviews):
-    start_time = time.time()
-    # positive reviews summary
-    pos_encoded_summary = process_positive_review(bart_tokenizer, bart_model, pos_reviews)
-
-    # negative reviews summary
-    neg_encoded_summary = process_negative_review(bart_tokenizer, bart_model, neg_reviews)
-
-    end_time = time.time()
-    print('review process time taken:', end_time - start_time)
-    return pos_encoded_summary, neg_encoded_summary
-
-def process_positive_review(bart_tokenizer, bart_model, pos_reviews):
-    print('start process_positive_review ')
-    start_time = time.time()
-    tokens = bart_tokenizer(pos_reviews, truncation=True, padding='longest', return_tensors='pt')
-    encoded_summary = bart_model.generate(**tokens, min_length=32, max_length=128,
-                                          early_stopping=True, num_return_sequences=1,
-                                          decoder_start_token_id=bart_tokenizer.pad_token_id)
-    pos_encoded_summary = bart_tokenizer.decode(encoded_summary.squeeze(), skip_special_tokens=True)
-    end_time = time.time()
-    print('positive review time taken:', end_time - start_time)
-    return pos_encoded_summary
-
-def process_negative_review(bart_tokenizer, bart_model, neg_reviews):
-    print(' start process_negative_review')
-    start_time = time.time()
-    tokens = bart_tokenizer(neg_reviews, truncation=True, padding='longest', return_tensors='pt')
-    encoded_summary = bart_model.generate(**tokens, min_length=32, max_length=128,
-                                          early_stopping=True, num_return_sequences=1,
-                                          decoder_start_token_id=bart_tokenizer.pad_token_id)
-    neg_encoded_summary = bart_tokenizer.decode(encoded_summary.squeeze(), skip_special_tokens=True)
-    end_time = time.time()
-    print('negative review time taken:', end_time - start_time)
-    return neg_encoded_summary
-
-def clean_summary(positive_reviews, negative_reviews):
-
-    #remove the remaining after .
-    last_pos_index = positive_reviews.rindex('.')+1
-    last_neg_index = negative_reviews.rindex('.')+1
-
-    positive_reviews = positive_reviews[:last_pos_index]
-    negative_reviews = negative_reviews[:last_neg_index]
-
-    #remove multiple whitespace
-    positive_reviews = re.sub('\s+', ' ', positive_reviews)
-    negative_reviews = re.sub('\s+', ' ', negative_reviews)
-
-    #remove multiple .
-    positive_reviews = re.sub('\.+', '.', positive_reviews)
-    negative_reviews = re.sub('\.+', '.', negative_reviews)
-
-    #capitalize after first letter, full stop and space
-    positive_reviews = positive_reviews.lower().capitalize()
-    negative_reviews = negative_reviews.lower().capitalize()
-
-    positive_reviews = re.sub('\.\s*([a-z])', lambda x: '. ' + x.group(1).capitalize(), positive_reviews)
-    negative_reviews = re.sub('\.\s*([a-z])', lambda x: '. ' + x.group(1).capitalize(), negative_reviews)
-
-    return positive_reviews[:last_pos_index], negative_reviews[:last_neg_index]
-
-
-# def load_model():
-#     model_name = 'google/pegasus-large'
-#     pegasus_tokenizer = PegasusTokenizer.from_pretrained(model_name)
-#     pegasus_model = PegasusForConditionalGeneration.from_pretrained(
-#         model_name)
-#     return pegasus_tokenizer, pegasus_model
-
-# def generate_punctuation(pos_encoded_summary, neg_encoded_summary):
-#     list_pos_summary = [pos_encoded_summary]
-#     list_neg_summary = [neg_encoded_summary]
-
-#     args = InferenceArguments(
-#     model_name_or_path="Qishuai/distilbert_punctuator_en",
-#     tokenizer_name="Qishuai/distilbert_punctuator_en",
-#     tag2punctuator=DEFAULT_ENGLISH_TAG_PUNCTUATOR_MAP)
-
-#     punctuator_model = Inference(inference_args=args,
-#                                 verbose=False)
-
-#     positive_reviews = punctuator_model.punctuation(list_pos_summary)[0][0]
-#     negative_reviews = punctuator_model.punctuation(list_neg_summary)[0][0]
-#     return positive_reviews, negative_reviews
-
-def process_sequential_review(bart_tokenizer, bart_model, pos_reviews, neg_reviews, device):
-    start_time = time.time()
-    # positive reviews summary
-    pos_encoded_summary = process_positive_review(bart_tokenizer, bart_model, pos_reviews, device)
-
-    # negative reviews summary
-    neg_encoded_summary = process_negative_review(bart_tokenizer, bart_model, neg_reviews, device)
-
-    end_time = time.time()
-    print('review process time taken:', end_time - start_time)
-    return pos_encoded_summary, neg_encoded_summary
-
-# def process_concurrent_review(bart_tokenizer, bart_model, pos_reviews, neg_reviews, device):
-#     start_time = time.time()
-
-#     with concurrent.futures.ThreadPoolExecutor() as executor:
-#         positive_future = executor.submit(process_positive_review, bart_tokenizer, bart_model, pos_reviews, device)
-#         negative_future = executor.submit(process_negative_review, bart_tokenizer, bart_model, neg_reviews, device)
-
-#         pos_encoded_summary = positive_future.result()
-#         neg_encoded_summary = negative_future.result()
-
-#     ## positive reviews summary
-#     # pos_encoded_summary = process_positive_review(bart_tokenizer, bart_model, pos_reviews, device)
-
-#     ## negative reviews summary
-#     # neg_encoded_summary = process_negative_review(bart_tokenizer, bart_model, neg_reviews, device)
-
-#     end_time = time.time()
-#     print('review process time taken:', end_time - start_time)
-#     return pos_encoded_summary, neg_encoded_summary
+def process_review(positive_reviews, negative_reviews):
+    start = time.time()
+    vertexai.init(project="wagon-bootcamp-389706", location="us-central1")
+    parameters = {
+        "temperature": 0.5,
+        "max_output_tokens": 1024,
+        "top_p": 1,
+        "top_k": 40
+    }
+    print('Load bison model')
+    model = TextGenerationModel.from_pretrained("text-bison@001")
+    print('Start summarizing positive reviews')
+    positive_reviews = "Provide a summary with about five sentences for the following article: " + positive_reviews + "\nSummary:"
+    positive_response = model.predict(positive_reviews, **parameters)
+    print('Start summarizing negative reviews')
+    negative_reviews = "Provide a summary with about five sentences for the following article: " + negative_reviews + "\nSummary:"
+    negative_response = model.predict(negative_reviews, **parameters)
+    end = time.time()
+    print(f'process reviews takes {end-start} seconds')
+    return positive_response.text, negative_response.text

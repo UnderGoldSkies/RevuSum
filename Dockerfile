@@ -13,7 +13,11 @@ WORKDIR /app
 
 RUN pip install --upgrade setuptools pip && \
     pip install -r requirements.txt && \
-    pip install nltk yake transformers sentencepiece torch && \
+    # pip install nltk yake transformers sentencepiece torch && \
+    pip install nltk yake && \
+    pip install vertexai && \
+    pip install "shapely<2.0.0" && \
+    pip install google-cloud-aiplatform && \
     python -m nltk.downloader -d /home/nltk_data stopwords punkt wordnet
 
 CMD uvicorn api.fast:app --host 0.0.0.0 --port $PORT
