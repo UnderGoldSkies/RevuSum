@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "revusum-391604",
+  "private_key_id": "2cd5519ab6c29a448263ee1ecb1b017ecbc9eb14",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDbe1d5zOrb1T5s\nL99YSt0kZRL+KIMxizQkB570IsIkwGAqiZqHAPxbrmdts848bUGatWm21C2L9nul\nyi2B9hyBdMKwu+vBxfTBORAvGMU7BkYcqZCrdur80tBVA+oMgIAfy2DBZ7nlwyQl\nIfqsk4TFOwrwYA44GEgUdzDPuX18TQpHJeynVJ5f9HQNsjD9cGQ6TmUpr2+8gu9T\nJi33OKzr4f0GCHJv+KT4M5GEHA4EcrqU9qVLx5kpjn30qgJAN7j3q9CuNHnDvqho\nYq05xoBvK+oPFfvsUFTsLVjJRu7rtGvYLkt+jaURx97nfUCWkGewUoWk/Iy/XgeH\nWHZqlN4HAgMBAAECggEAAbpxMkSfD1jsSZZeqCY4riPLyZmQojWyeSxVDyoW0TzK\ne1RP7r1kks8dT9z8qyEwKU0rUXs4jFXAkR1+QVTtTJSgE8KWt9IwK1w23jcHp27J\n7peLJNquiz4H6Ciw7WfiPpK4CvV9rxqZCcQqMC+TBSPgpM33nU40g0X19RFP7GmS\njJ56JHs59akcO3AhBGLUnU40bgWOZWOjC9+ISIwMyIh2x2hBNiVLdHNUAnV2+ooJ\nXhtua2+YVfgf5SzC/ZLkl6KiZ6Vvr1gXXiKegXO7NyhZonL3rya8OoKS9aFQTGby\nh2lXe7CFZWHCcNZEfMfudMx0hLRsN7N5AwIkgg0gCQKBgQDvOQTBAYlATTS9CGKC\n/+msMOMxZHma8psjlVN2qLff7Pow+9EGB4EzAndEol38Cy0NPpUxqPlogG8pYUVV\n+5g0temSM+55WQjn6rKFT8blWoG7WuQryHc/JqcNiIJg8XksjL3e9R04Acn7wOuc\n6MmXXYFPz22erDMuEE95AN4L2QKBgQDq3+WAqtHujD/OTQdUs987tLmdO5exccYF\nKTaz3AntXv9CVAFN/iqJwczD/8GQFwc9vRQupvi0rZiF2ZrrnnqTH+zHDqcsV0fN\nNiSmT0WCrYbnRgo2h04bdmHQ8rUgOCODfKKLy3eWVm5HfZFGB1ASnerb5y/aqAKQ\nHHhx0NFs3wKBgQCirZys/7VtU9N0ZTpQqWUnoostcI09sJONjCOZAr0f+xBctTH8\nrqfOn3Op6dyN5K+7XP6qKaWJyiVN94bmJNTpq3dt5ADc5o4m4DSMcabpGzYzyWh2\n2bk16bwaeOVotW1YvVD1SKyZBKZtnFDdgHRuibjBJGcAS0v2nELfH5bgaQKBgAEa\nlEWKh/oLBrG9gu9O+Rmau9SVVx0qX7fefbdSrWlELQbuxiLLsv96va+eIBbBRPNx\nVAr0Fe8jcbgPUb8Ru5m9aKt20ipPLrM0Me/mJ3l5v0yO87VV5XQTlloZCejg2qnf\niBQIHMPEHDiRyoD9v86Wl2f5Kixo5bovqBFA3fsZAoGBAMmMvpxnRCyndi2Hl9u4\n2OeQkcQxUY4Zw1yEdP9m1n/y41732NUd/r1V1jTSRQGQdiSkzYqaz9e7RxF81enK\nIuyIJHpzNA1FUIVvbLYElsh7fP68XhjxEFxcwg/cZqrO+0O2UqeMhXOoZhBfCc0n\n+SB3tdjg/tC8eWPuT0L9dzrx\n-----END PRIVATE KEY-----\n",
+  "client_email": "revusum-summary-project@revusum-391604.iam.gserviceaccount.com",
+  "client_id": "104407747270202778383",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/revusum-summary-project%40revusum-391604.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

@@ -4,6 +4,7 @@ import time
 import re
 import vertexai
 from vertexai.language_models import TextGenerationModel
+from ml_logic.params import *
 # !pip install vertexai
 # !pip install "shapely<2.0.0"
 # !pip install google-cloud-aiplatform >= 1.26.0
@@ -16,9 +17,10 @@ def main(df, hotel_name):
 
 def load_data():
     #pull the data
-
     path = os.getcwd()
     url = os.path.join(path, '..', 'data', 'cleaned_test_data_5.pkl')
+    print('google credential path:', GOOGLE_CREDENTIAL_PATH)
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_CREDENTIAL_PATH
     raw_df = pd.read_pickle(url)
     return raw_df
 
@@ -65,7 +67,7 @@ def get_reviews(raw_df, hotel_name):
 
 def process_review(positive_reviews, negative_reviews):
     start = time.time()
-    vertexai.init(project="wagon-bootcamp-389706", location="us-central1")
+    vertexai.init(project="revusum-391604", location="us-central1")
     parameters = {
         "temperature": 0.5,
         "max_output_tokens": 1024,
