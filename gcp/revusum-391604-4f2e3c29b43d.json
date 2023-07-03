@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "revusum-391604",
+  "private_key_id": "4f2e3c29b43d23676e0e64fce58de9368f3eeb91",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCY7Ad73WWZDs+l\nVy5Pla97UANh/nu9gAZmhdR6p9g9RDzcwb29hY+0+kaiDOq/4lWIUaAwUW87ZZgk\nhcaVmddTYtSqGIukbuLxXO8czxzotv3A3sbJCGEMIFOpn5DVH+TqcAknyM7rzoKm\n7IgyeclPSStAxCvctEuaOiCqNva4XZxEzgo//Dn5f6KPSyH4rHjo4xrRy17+Y2I+\nq9aiFzv2uy5yb4MUsiUFb/gEF0bGcq+7KZiCLC90H7UwV9Dm+UGkkUPlyioeYPXU\ng/TFIRo3dFEW0lYOeWlr/1LIcqIQ0mIjqizRkZ7guC0x7jPuDdoqhU+D+L3ekSSu\nXMhmcyPpAgMBAAECggEAJmiN/qXeaUGHlNsfRhzt/NZdayT8Vl3L/b8aXY4/qS+0\n66t7qRjdPdLon7YH1hcWbY024zvo6K29N1skRBnmM8rsaCaPGEdDl+TEJ+O7OpYP\niPxLSF3i5iVObhmmSmle2SU3n3b3xdFSDnP1R1xAXDof833yGFZucLet0aLJeAej\nXNeEdYDteUA60RVff7GKKk24jCa3SXMK5Or0bO/d6Ff9GqsLBC+JxGOhHhWu9BId\nAK+kG9ULmxJvw106kNTyrdY27BVrETIe8RgxE5963hrVOEOsFR9GTL+mucKPIew0\nkVPqYr9cVVwap/xrK4hLRMl7jSq2buyRvjC8rERv8wKBgQDUmtxj0aM8jlaDpW9X\nc3ucEzgJDqeqFTcahF8MNJwoLAHlPA6lrguETlJT6fhGUStDwvoP6JiLGzYHY+Es\n0pcI9947lIjQqxiyCU7lIhe+XDHf7dSlgd+V3VRczRBvmpNIIvDc+QQrovwdqgZ6\n3Muz5u7EwwvORXP2+raJ3OBcewKBgQC4IpXs3hHme9xYaeADJT1madhoKl9B+eT5\nldzyvbn9Nt5vBI/SiLmuIV8L5TMOVazuVydxF8grzobsgE+y6Gq4eM19p86IFxO6\nCwBGDLzJa/SuzunK8d9YxVfNfCUl3WB6Jas31pjNWSWLYYFS16UotlZgGVA6gwWT\nPzt6s6QN6wKBgQCA5u/O2ZEGKyrLIKfUNuFwLLrhyu/fEIPbYPyb0t4HAT+Y9APR\ncifrbO0/kXEFeTspF3Mz6Ats8++bJXSmD3yhZF9qclFNax9K+pfKFxScRxu6MGGo\ng4jDPXFj3rUjZW3846pz38smhegkOC07mtkq105XIAbtZnC8AyBfj/q8NwKBgBJP\ndiMwzgziYj30gU8uw9VMTzXEiOZxqCBdk7Qbw8P3UdUuWfLwn64+KUpwh0w0ntaw\nmf54A/K/PdGEzOgYjow7jwugxTvpN4/3ihZtK9THxHQhpUQGG1SjgyCu6K7EPdTH\nrCgIUfeRltcuYgLP6N+MijhSLBU1dDd5QTvpYzXzAoGBALmmCubuDln6j4e4JPYX\niwIj3CNfm01VPDrpEWgIdVJnTDPI0X/yfDHeJhT73v8cKhGNVxwMxGf0xnsOnHbb\n063av6wAgW0GLf317jMlLddtdaESxzDjKKrdA6/Xbq5DqYrjOu2j68oDASq/Fgqo\nboR2Qw3764GbQgQgN8YJvfpn\n-----END PRIVATE KEY-----\n",
+  "client_email": "revusum@revusum-391604.iam.gserviceaccount.com",
+  "client_id": "112199760406110251415",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/revusum%40revusum-391604.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
