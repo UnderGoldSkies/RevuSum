@@ -153,7 +153,7 @@ def set_background(png_file):
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
 #set the background
-set_background('img/hotel_on_lake.jpeg')
+set_background(f"{file_path}img/hotel_on_lake.jpeg")
 
 
 # adjust spacing
