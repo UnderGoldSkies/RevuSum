@@ -16,6 +16,9 @@ default_hotel_name = " "
 #color of keywords
 Pos_color = "#afa"
 Neg_color = "#faa"
+#switch file path between
+file_path = 'website/' #streamlit cloud environment
+# file_path = '' #local environment
 
 #dummy data for testing, 111
 return_dict = dict()
@@ -45,12 +48,12 @@ def process_result(hotel_selected):
                 keywords_list.append(annotation(key, value_str, font_size='18px', background=Pos_color))
             else:
                 keywords_list.append(annotation(key, value_str, font_size='18px', background=Neg_color))
-            keywords_list.append(annotation('   ', styles='padding-right: 40px; background-color: #FFFFFF;'))
+            keywords_list.append(annotation('   ', styles='padding-right: 40px; background-color: rgba(255,255,255,0);'))
     return positive_sum, negative_sum
 
 def load_hotel_name():
-    url = os.getcwd() +  '/website/cleaned_test_data_5.pkl' #streamlit cloud environment
-    # url = 'cleaned_test_data_5.pkl' #  local environment
+    # url = os.getcwd() +  '/website/cleaned_test_data_5.pkl' #streamlit cloud environment
+    url = f'{file_path}cleaned_test_data_5.pkl' #  local environment
     raw_df = pd.read_pickle(url)
     hotel_list = [default_hotel_name]
     for hotel_name in raw_df['Hotel_Name'].unique():
@@ -95,6 +98,37 @@ def top_html(hotel_selected):
                 </div>"""
     return top_html
 
+#convert two thumb image to base64
+with open(f"{file_path}img/thumbsup.png", "rb") as image_file:
+    encoded_string_up = base64.b64encode(image_file.read()).decode('utf-8')
+with open(f"{file_path}img/thumbsdown.png", "rb") as image_file:
+    encoded_string_down = base64.b64encode(image_file.read()).decode('utf-8')
+
+
+def summary_html(positive_sum,negative_sum):
+    html_code = f'''
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div style="flex: 0.2; text-align: center;">
+                    <img src="data:image/jpeg;base64,{ encoded_string_up }" alt="Image" width="56" height="56" style="display: block; margin: 0 auto;">
+                </div>
+                <div style="flex: 2;">
+                    <div style="flex: 1; font-size: 20px; font-weight: bold; padding-right: 10px;">What people like about the hotel:</div>
+                    <p>{ positive_sum }</p>
+                </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div style="flex: 0.2; text-align: center;">
+                    <img src="data:image/jpeg;base64,{ encoded_string_down }" alt="Image" width="56" height="56" style="display: block; margin: 0 auto;">
+                </div>
+                <div style="flex: 2;">
+                    <div style="flex: 1; font-size: 20px; font-weight: bold; padding-right: 10px;">What people don't like about the hotel:</div>
+                    <p>{ negative_sum }</p>
+                </div>
+                </div>
+    '''
+
+    return html_code
+
 # st.title("RevuSUM")
 # st.markdown("""
 # RevuSum is a cutting-edge web app that simplifies hotel selection. Powered by AI, it generates concise summaries and insightful information from real visitor reviews. Say goodbye to manual review sifting - with RevuSum, access relevant summaries highlighting room quality, location, breakfast, cleanliness, and more. Make informed holiday choices with RevuSum's comprehensive insights.
@@ -130,23 +164,17 @@ st.write(' ')
 st.write(' ')
 st.write(' ')
 st.write(' ')
+st.write(' ')
+st.write(' ')
+st.write(' ')
+st.write(' ')
 
 
+# with st.container():
 #logo
-col1, col2, col3 = st.columns(3)
-
-
-with col1:
-    st.write(' ')
-
-with col2:
-    img = Image.open('website/img/logo3.jpg')  #streamlit cloud environment
-    # img = Image.open('img/logo3.jpg')  #local environment
-    st.image(img, width=240)
-
-with col3:
-    st.write(' ')
-
+# img = Image.open('website/img/logo3.jpeg')  #streamlit cloud environment
+img = Image.open(f'{file_path}img/logo3.jpeg')  #local environment
+st.image(img, width=240)
 
 # dropdown box Title
 st.subheader(" :violet[Pick Your Hotel]")
@@ -157,10 +185,12 @@ hotel_selected = st.selectbox(
         (hotel_list),
         label_visibility = 'collapsed',
 )
+
 ## if a hotel is selected, show the result
 if hotel_selected != default_hotel_name:
     # initiate the Progress bar
-    my_bar = st.progress(0, text=f":blue[Checking for {hotel_selected}. Please wait...]")
+    # st.markdown("<span style='font-size: 30px; color: blue; font-weight: bold;'> Progress: </span>", unsafe_allow_html=True)
+    my_bar = st.progress(0)
 
     # add a big container
     with st.container():
@@ -173,7 +203,7 @@ if hotel_selected != default_hotel_name:
         for i in [1, 3, 5, 7]:
             progress = i
             time.sleep(0.1)
-            my_bar.progress(progress, text=f":blue[Checking for {hotel_selected}. May take up to 2-3 min, please wait ... {progress}%]")
+            my_bar.progress(progress)
 
 
         # call API
@@ -182,8 +212,8 @@ if hotel_selected != default_hotel_name:
 
         for i in [95,97,100]:
             progress = i
-            time.sleep(1)
-            my_bar.progress(progress, f":blue[Progress: {progress}%]")
+            time.sleep(0.1)
+            my_bar.progress(progress)
 
         # show the top html content
         st.markdown(top_html, unsafe_allow_html=True)
@@ -194,43 +224,22 @@ if hotel_selected != default_hotel_name:
 
 
         st.subheader("Review Summary: ")
-        with st.container():
-            image_col, text_col = st.columns((0.2,2))
-            with image_col:
-                img = Image.open('website/img/thumbsup.jpeg')    #streamlit cloud environment
-                # img = Image.open('img/thumbsup.jpeg')  #local environment
-                st.image(img)
 
+        # generate the summary html content
+        summary = summary_html(positive_sum,negative_sum)
+        # show the top html content
+        st.markdown(summary, unsafe_allow_html=True)
 
-            with text_col:
-                st.markdown('<div style="flex: 1; font-size: 20px; font-weight: bold; padding-right: 10px;">What people like about the hotel: </div>', unsafe_allow_html=True)
-                st.write(positive_sum)
-                #st.markdown("[Read more...](https://towardsdatascience.com/a-multi-page-interactive-dashboard-with-streamlit-and-plotly-c3182443871a)")
-
-        with st.container():
-            image_col, text_col = st.columns((0.2,2))
-            with image_col:
-                img = Image.open('website/img/thumbsdown.jpeg')    #streamlit cloud environment
-                # img = Image.open('img/thumbsdown.jpeg')  #local environment
-                st.image(img)
-
-            with text_col:
-                st.markdown('<div style="flex: 1; font-size: 20px; font-weight: bold; padding-right: 10px;">What people don\'t like about the hotel: </div>', unsafe_allow_html=True)
-                st.write(negative_sum)
-
-##
-
-# # img = Image.open('website/img/hotel_stiched.png')    #streamlit cloud environment
-# img = Image.open('img/hotel_stiched.png')  #local environment
-# st.image(img)
-
-st.markdown(
-    """
-<style>
-    div[data-testid="stVerticalBlock"] div[style*="flex-direction: column;"] div[data-testid="stVerticalBlock"] {
-        background-color: #f0f0f0;
-    }
-</style>
-""",
-    unsafe_allow_html=True,
-)
+        st.markdown(
+                        """
+                    <style>
+                        div[data-testid="stVerticalBlock"] div[style*="flex-direction: column;"] div[data-testid="stVerticalBlock"] {
+                            background-color: rgba(255,255,255,0.6);
+                            padding: 15px;
+                            border-radius: 8px;
+                            width: 730px;
+                        }
+                    </style>
+                    """,
+                        unsafe_allow_html=True,
+                    )
