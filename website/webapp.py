@@ -20,21 +20,23 @@ Neg_color = "#faa"
 file_path = 'website/' #streamlit cloud environment
 # file_path = '' #local environment
 
-# #dummy data for testing, 111
-# return_dict = dict()
-# return_dict.update({'location':0.82, 'service':0.755, 'breakfast':0.567, 'bed':0.321, 'cleanliness':0.91,
-# 'Positive_Review': "The bed was so comfy, and the bathroom was good for the people who used a shataf and for foreign people.the staff were also really nice. location was good, metro walking distance, shops and restaurants close by. comfortable bed, quite spacious for singapore, good air-conditioning - had tea and coffee making facilities and a fridge. location was good close to station and short ride to gardens by the bay. staff were great especially friendly johan, who seemed to be always there when we needed assistance, very helpful. 1 minute walking from little india, plenty of indian restaurants, money exchange, shopping area, mustafa",
-# 'Negative_Review': "Stayed for 7 days so a bit more variety in breakfast food especially the fruit would be nice but again for the price it was fine. it took some time to get hot water when taking shower. restaurant closed quite early and no option to get food late at night within hotel. wifi in room was poor but hotel did provide a spare wifi gadget so it worked out okay. almost good but an aircontrol at my room didn't work a little bit so i feeled a little hot."
-# })
-# #dummy data for testing, 111
+#dummy data for testing, 111
+return_dict = dict()
+return_dict.update({'location':0.82, 'service':0.755, 'breakfast':0.567, 'bed':0.321, 'cleanliness':0.91,
+'Positive_Review': "The bed was so comfy, and the bathroom was good for the people who used a shataf and for foreign people.the staff were also really nice. location was good, metro walking distance, shops and restaurants close by. comfortable bed, quite spacious for singapore, good air-conditioning - had tea and coffee making facilities and a fridge. location was good close to station and short ride to gardens by the bay. staff were great especially friendly johan, who seemed to be always there when we needed assistance, very helpful. 1 minute walking from little india, plenty of indian restaurants, money exchange, shopping area, mustafa",
+'Negative_Review': "Stayed for 7 days so a bit more variety in breakfast food especially the fruit would be nice but again for the price it was fine. it took some time to get hot water when taking shower. restaurant closed quite early and no option to get food late at night within hotel. wifi in room was poor but hotel did provide a spare wifi gadget so it worked out okay. almost good but an aircontrol at my room didn't work a little bit so i feeled a little hot."
+})
+#dummy data for testing, 111
 
+@st.cache_data
 def process_result(hotel_selected):
-    #call api, 111
-    url = 'https://revusumbison-jso3izqmjq-ew.a.run.app/predict'
-    params = dict(hotel_name=hotel_selected)
-    response = requests.get(url, params=params)
-    return_dict = response.json()
-    #call api, 111
+    # #call api, 111
+    # url = 'https://revusumbison-jso3izqmjq-ew.a.run.app/predict'
+    # params = dict(hotel_name=hotel_selected)
+    # response = requests.get(url, params=params)
+    # return_dict = response.json()
+    # #call api, 111
+
 
     for key, value in return_dict.items():
         if key == 'Positive_Review':
@@ -58,6 +60,15 @@ def load_hotel_name():
     hotel_list = [default_hotel_name]
     for hotel_name in raw_df['Hotel_Name'].unique():
         hotel_list.append(hotel_name)
+    additional_list = ["Royal Plaza on Scotts",
+                       "The Europe Hotel & Resort",
+                        "European Hotel",
+                        "De LEurope",
+                        "Leonardo Royal London St Paul",
+                        "The Montcalm At Brewery London City",
+                        "Hotel Isola Sacra"]
+    hotel_list = hotel_list + additional_list
+
     return hotel_list
 
 #get the hotel name list
@@ -65,35 +76,41 @@ hotel_list = load_hotel_name()
 
 # define a function to show hotel top html content
 def top_html(hotel_selected):
-    address = '277 Orchard Road, Orchard, 238858 Singapore, Singapore'
-    total_reviews = '2,294'
-    score_text = 'Very Good'
-    score_point = '8.4'
-    #create a image url list
-    image_urls = ['https://cf2.bstatic.com/xdata/images/hotel/max500/327961860.jpg?k=40c2e566b3c5f462f8a18df6cd0476ca1334801767097d41b353b96259327562&amp;o=&amp;hp=1',
-                      'https://cf2.bstatic.com/xdata/images/hotel/max500/327961868.jpg?k=284648f1385a9ae8e8c74ebf0b7d20583d4f38289121c17f407f23d8dbbea33b&amp;o=&amp;hp=1',
-                      'https://cf2.bstatic.com/xdata/images/hotel/max1024x768/326893205.jpg?k=977021538d51e8e7d1ee65fd16d26db58547c263f681d78ad6f3f8bb41837865&amp;o=&amp;hp=1']
+
+    # address = '277 Orchard Road, Orchard, 238858 Singapore, Singapore'
+    # total_reviews = '2,294'
+    # score_text = 'Very Good'
+    # score_point = '8.4'
+    # #create a image url list
+    # image_urls = ['https://cf2.bstatic.com/xdata/images/hotel/max500/327961860.jpg?k=40c2e566b3c5f462f8a18df6cd0476ca1334801767097d41b353b96259327562&amp;o=&amp;hp=1',
+    #                   'https://cf2.bstatic.com/xdata/images/hotel/max500/327961868.jpg?k=284648f1385a9ae8e8c74ebf0b7d20583d4f38289121c17f407f23d8dbbea33b&amp;o=&amp;hp=1',
+    #                   'https://cf2.bstatic.com/xdata/images/hotel/max1024x768/326893205.jpg?k=977021538d51e8e7d1ee65fd16d26db58547c263f681d78ad6f3f8bb41837865&amp;o=&amp;hp=1']
+    #read the hotel basic info from csv file
+    df = pd.read_csv('hotel_basic_info.csv')
+
+    # Get the index of the row where the 'hotel_name' column is 'Hotel A'
+    index = df.index[df['hotel_name'] == hotel_selected ][0]
 
     top_html = f"""<div >
                         <h2  style="display: flex; justify-content: space-between; align-items: center; font-family: 'Avenir Next'; font-size: 24px; padding:0px; margin:0%">{hotel_selected}</h2>
                     </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 15px; ">
-                <div style="flex: 1; padding-right: 10px;">{address}</div>
+                <div style="flex: 1; padding-right: 10px;">{df.iloc[index]['address']}</div>
                 <div style="display: flex; justify-content: space-between; align-items: center;  padding: 5px;">
                     <div style="display: flex; flex-direction: column; padding: 5px;">
-                    <div style="font-size: 16px; font-weight: bold;">{score_text}</div>
-                    <div style="font-size: 12px;">{total_reviews} reviews</div>
+                    <div style="font-size: 16px; font-weight: bold;">{df.iloc[index]['score_text']}</div>
+                    <div style="font-size: 12px;">{df.iloc[index]['total_reviews']} reviews</div>
                     </div>
-                    <div style="font-size: 16px; font-weight: bold;background-color: blue; color: white; padding: 5px;">{score_point}</div>
+                    <div style="font-size: 16px; font-weight: bold;background-color: blue; color: white; padding: 5px;">{df.iloc[index]['score_point']}</div>
                 </div>
                 </div>
                 <div style="display: flex; justify-content: space-between;">
                 <div style="display: flex; flex-direction: column; flex: 1; margin-right: 10px;">
-                    <div><img src="{image_urls[0]}" style="width: 100%; height: auto; margin-top: auto; margin-bottom: 10px;"></div>
-                    <div></div><img src="{image_urls[1]}" style="width: 100%; height: auto; margin-top: auto;">
+                    <div><img src="{df.iloc[index]['image_url_1']}" style="width: 100%; height: auto; margin-top: auto; margin-bottom: 10px;"></div>
+                    <div></div><img src="{df.iloc[index]['image_url_2']}" style="width: 100%; height: auto; margin-top: auto;">
                 </div>
                 <div style="display: flex; align-items: flex-end; flex: 2;">
-                    <img src="{image_urls[2]}" style="width: 100%; height: auto;">
+                    <img src="{df.iloc[index]['image_url_3']}" style="width: 100%; height: auto;">
                 </div>
                 </div>"""
     return top_html
@@ -229,6 +246,21 @@ if hotel_selected != default_hotel_name:
         summary = summary_html(positive_sum,negative_sum)
         # show the top html content
         st.markdown(summary, unsafe_allow_html=True)
+
+
+        ### user input for keyword search to get sentiment score and review summary for that topic
+        title = st.text_input('Type your keyword', '')
+        if title != '':
+            # call keyword API
+            positive_sum, negative_sum = process_result(hotel_selected)
+            st.write('The current movie title is', title, 'hotel name', hotel_selected)
+
+            #keyword content
+            annotated_text(keywords_list)
+            # generate the summary html content
+            summary = summary_html(positive_sum,negative_sum)
+            # show the top html content
+            st.markdown(summary, unsafe_allow_html=True)
 
         st.markdown(
                         """
