@@ -86,7 +86,7 @@ def top_html(hotel_selected):
     #                   'https://cf2.bstatic.com/xdata/images/hotel/max500/327961868.jpg?k=284648f1385a9ae8e8c74ebf0b7d20583d4f38289121c17f407f23d8dbbea33b&amp;o=&amp;hp=1',
     #                   'https://cf2.bstatic.com/xdata/images/hotel/max1024x768/326893205.jpg?k=977021538d51e8e7d1ee65fd16d26db58547c263f681d78ad6f3f8bb41837865&amp;o=&amp;hp=1']
     #read the hotel basic info from csv file
-    df = pd.read_csv('hotel_basic_info.csv')
+    df = pd.read_csv(f'{file_path}hotel_basic_info.csv')
 
     # Get the index of the row where the 'hotel_name' column is 'Hotel A'
     index = df.index[df['hotel_name'] == hotel_selected ][0]
