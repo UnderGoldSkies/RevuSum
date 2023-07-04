@@ -295,7 +295,7 @@ if hotel_selected != default_hotel_name:
                         """
                     <style>
                         div[data-testid="stVerticalBlock"] div[style*="flex-direction: column;"] div[data-testid="stVerticalBlock"] {
-                            background-color: rgba(255,255,255,0.8);
+                            background-color: rgba(255,255,255,0.7);
                             padding: 15px;
                             border-radius: 8px;
                             width: 730px;
