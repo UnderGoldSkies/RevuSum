@@ -10,6 +10,7 @@ import pandas as pd
 import base64
 
 keywords_list=[]
+keywords_list2=[]
 positive_sum =''
 negative_sum =''
 default_hotel_name = " "
@@ -52,6 +53,28 @@ def process_result(hotel_selected):
                 keywords_list.append(annotation(key, value_str, font_size='18px', background=Neg_color))
             keywords_list.append(annotation('   ', styles='padding-right: 40px; background-color: rgba(255,255,255,0);'))
     return positive_sum, negative_sum
+
+#input keyword API
+def predict_hotel_keyword(hotel_selected, keyword):
+    url = 'https://revusumbison-jso3izqmjq-ew.a.run.app/predict_hotel_keyword"'
+    params = dict({'hotel_name':hotel_selected, 'keyword':keyword})
+    response = requests.get(url, params=params)
+    return_dict = response.json()
+    for key, value in return_dict.items():
+        if key == 'Positive_Review':
+            positive_sum = value
+        elif key == 'Negative_Review':
+            negative_sum = value
+        else:
+            value_str = f'{round(value * 100)} %:heavy_check_mark:'
+            key = key.capitalize()
+            if value > 0.5:
+                keywords_list2.append(annotation(key, value_str, font_size='18px', background=Pos_color))
+            else:
+                keywords_list2.append(annotation(key, value_str, font_size='18px', background=Neg_color))
+            keywords_list2.append(annotation('   ', styles='padding-right: 40px; background-color: rgba(255,255,255,0);'))
+    return positive_sum, negative_sum
+
 
 def load_hotel_name():
     # url = os.getcwd() +  '/website/cleaned_test_data_5.pkl' #streamlit cloud environment
@@ -252,13 +275,13 @@ if hotel_selected != default_hotel_name:
         title = st.text_input('Type your keyword', '')
         if title != '':
             # call keyword API
-            positive_sum, negative_sum = process_result(hotel_selected)
+            positive_sum2, negative_sum2 = predict_hotel_keyword(hotel_selected)
             st.write('The current movie title is', title, 'hotel name', hotel_selected)
 
             #keyword content
-            annotated_text(keywords_list)
+            annotated_text(keywords_list2)
             # generate the summary html content
-            summary = summary_html(positive_sum,negative_sum)
+            summary = summary_html(positive_sum2,negative_sum2)
             # show the top html content
             st.markdown(summary, unsafe_allow_html=True)
 
