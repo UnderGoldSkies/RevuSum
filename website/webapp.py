@@ -282,7 +282,7 @@ if hotel_selected != default_hotel_name:
         if keyword != '':
             # call keyword API
             positive_sum2, negative_sum2 = predict_hotel_keyword(hotel_selected,keyword)
-            st.write('The current movie title is', keyword, 'hotel name', hotel_selected)
+            # st.write('The current movie title is', keyword, 'hotel name', hotel_selected)
 
             #keyword content
             annotated_text(keywords_list2)
