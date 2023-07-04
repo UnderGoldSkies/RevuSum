@@ -4,7 +4,7 @@ import string
 import os
 import pickle
 from nltk.corpus import stopwords
-from nltk import word_tokenize
+from nltk import word_tokenize, WordNetLemmatizer, pos_tag
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from sklearn.utils import shuffle
@@ -241,3 +241,30 @@ def prediction_of_test_data(preprocess_df):
 
 
     return test_X, pred_y, test_y
+
+
+def preprocess_keyword(text):
+    # Remove whitespace
+    text = text.replace(" ", "")
+
+    # Lowercase
+    text = text.lower()
+
+    # Remove digits
+    text = ''.join(char for char in text if not char.isdigit())
+
+    # Tokenize words
+    word_tokens = word_tokenize(text)
+
+    # Lemmatize nouns and verbs
+    lemmatizer = WordNetLemmatizer()
+    lemmatized_words = []
+    for word, pos in pos_tag(word_tokens):
+        if pos.startswith('N'):
+            lemmatized_words.append(lemmatizer.lemmatize(word, pos='n'))
+        elif pos.startswith('V'):
+            lemmatized_words.append(lemmatizer.lemmatize(word, pos='v'))
+        else:
+            lemmatized_words.append(word)
+
+    return ' '.join(lemmatized_words)

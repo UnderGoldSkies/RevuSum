@@ -20,6 +20,12 @@ def main(df, hotel_name):
     positive_summary, negative_summary = process_json(positive_json_summary, negative_json_summary)
     return (positive_summary, negative_summary)
 
+def process_keyword(df, hotel_name, keyword):
+    pos_reviews, neg_reviews = get_review_keyword(df, hotel_name, keyword)
+    positive_json_summary, negative_json_summary = process_review(pos_reviews, neg_reviews)
+    positive_summary, negative_summary = process_json(positive_json_summary, negative_json_summary)
+    return (positive_summary, negative_summary)
+
 def load_data():
     #pull the data
     path = os.getcwd()
@@ -69,6 +75,18 @@ def get_reviews(raw_df, hotel_name):
     pos_reviews = turn_rev_series_to_str(positive_reviews)
     neg_reviews = turn_rev_series_to_str(negative_reviews)
     return pos_reviews, neg_reviews
+
+def get_review_keyword(raw_df, hotel_name, keyword):
+    hotel_df = raw_df.query(f'Hotel_Name == "{hotel_name}"')
+    positive_reviews_df = pd.DataFrame(hotel_df['Positive_Review'].dropna().apply(first_clean).dropna(), columns=['Positive_Review'])
+    negative_reviews_df = pd.DataFrame(hotel_df['Negative_Review'].dropna().apply(first_clean).dropna(), columns=['Negative_Review'])
+    positive_reviews_df = positive_reviews_df[positive_reviews_df['Positive_Review'].str.contains(keyword)]
+    negative_reviews_df = negative_reviews_df[negative_reviews_df['Negative_Review'].str.contains(keyword)]
+    print(positive_reviews_df.shape, hotel_df.shape)
+    pos_reviews = turn_rev_series_to_str(positive_reviews_df['Positive_Review'])
+    neg_reviews = turn_rev_series_to_str(negative_reviews_df['Negative_Review'])
+    return pos_reviews, neg_reviews
+
 
 def process_review(positive_reviews, negative_reviews):
     start = time.time()
