@@ -29,7 +29,7 @@ file_path = 'website/' #streamlit cloud environment
 # })
 # #dummy data for testing, 111
 
-@st.cache_data
+# @st.cache_data
 def process_result(hotel_selected):
     #call api, 111
     url = 'https://revusumbison-jso3izqmjq-ew.a.run.app/predict'
@@ -56,13 +56,16 @@ def process_result(hotel_selected):
 
 #input keyword API
 def predict_hotel_keyword(hotel_selected, keyword):
-    url = 'https://revusumbison-jso3izqmjq-ew.a.run.app/predict_hotel_keyword"'
+    print(hotel_selected, keyword)
+    url = 'https://revusumbison-jso3izqmjq-ew.a.run.app/predict_hotel_keyword'
     params = dict({'hotel_name':hotel_selected, 'keyword':keyword})
     response = requests.get(url, params=params)
     return_dict = response.json()
+    print('111')
+    print(return_dict)
 
     for key, value in return_dict.items():
-        st.write(f"{key}, {value}")
+        print(f"{key}, {value}")
         if key == 'Positive_Review':
             positive_sum = value
         elif key == 'Negative_Review':
@@ -262,6 +265,7 @@ if hotel_selected != default_hotel_name:
 
         #To show the hotel review data
         st.subheader("Hot topics: ")
+        print(keywords_list)
         annotated_text(keywords_list)
 
 
