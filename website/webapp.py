@@ -30,7 +30,7 @@ file_path = 'website/' #streamlit cloud environment
 
 def process_result(hotel_selected):
     #call api, 111
-    url = 'https://teamworkmakeswetdream-tddniu6ceq-ew.a.run.app/predict'
+    url = 'https://revusumbison-jso3izqmjq-ew.a.run.app/'
     params = dict(hotel_name=hotel_selected)
     response = requests.get(url, params=params)
     return_dict = response.json()
