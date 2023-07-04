@@ -272,11 +272,11 @@ if hotel_selected != default_hotel_name:
 
 
         ### user input for keyword search to get sentiment score and review summary for that topic
-        title = st.text_input('Type your keyword', '')
-        if title != '':
+        keyword = st.text_input('Type your keyword', '')
+        if keyword != '':
             # call keyword API
-            positive_sum2, negative_sum2 = predict_hotel_keyword(hotel_selected)
-            st.write('The current movie title is', title, 'hotel name', hotel_selected)
+            positive_sum2, negative_sum2 = predict_hotel_keyword(hotel_selected,keyword)
+            st.write('The current movie title is', keyword, 'hotel name', hotel_selected)
 
             #keyword content
             annotated_text(keywords_list2)
